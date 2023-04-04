@@ -1,0 +1,10 @@
+# Files and directories created by pub.
+dart/telegram_client/.dart_tool/
+dart/telegram_client/.packages
+
+# Conventional directory for build output.
+dart/telegram_client/build/
+
+node-js/telegram-client/node_modules/
+
+node-js/telegram-client/node_modules/*

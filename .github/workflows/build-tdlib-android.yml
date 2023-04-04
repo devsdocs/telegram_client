@@ -1,0 +1,89 @@
+name: Tdlib Android
+on: [workflow_dispatch]
+jobs:
+  build:
+    name: Build Apps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Export Release Timestamp
+        run: echo "APP_VERSION=v$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+      - name: Install Depends
+        run: sudo apt-get install -y make git zlib1g-dev libssl-dev gperf cmake clang libc++-dev libc++abi-dev ninja-build
+      - name: Clone Repo tdlib
+        run: |
+          git clone https://github.com/bsggr78/tddroid.git
+          cd tddroid
+          git clone https://github.com/tdlib/td tdlib-src
+          cd build-folder
+          mkdir -p build_native
+          cd build_native
+          cmake .. || exit 1
+          cmake --build . --target prepare_cross_compiling || exit 1
+          cd ..
+      - name: Build Tdlib android arm64-v8a
+        run: |
+          cd tddroid
+          cd build-folder
+          export ANDROID_SDK_ROOT=../ndk
+          export ABI="arm64-v8a"
+          mkdir -p build-$ABI
+          cd build-$ABI
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${ANDROID_SDK_ROOT}/build/cmake/android.toolchain.cmake  -DCMAKE_BUILD_TYPE=MinSizeRel -GNinja -DANDROID_ABI=${ABI} || exit 1
+          cmake --build . || exit 1
+          cd ..
+
+          mkdir -p ../output/$ABI/
+          cp build-$ABI/libtd*.so ../output/libtdjson-$ABI.so
+      - name: Build Tdlib android armeabi-v7a
+        run: |
+          cd tddroid
+          cd build-folder
+          export ANDROID_SDK_ROOT=../ndk
+          export ABI="armeabi-v7a"
+          mkdir -p build-$ABI
+          cd build-$ABI
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${ANDROID_SDK_ROOT}/build/cmake/android.toolchain.cmake  -DCMAKE_BUILD_TYPE=MinSizeRel -GNinja -DANDROID_ABI=${ABI} || exit 1
+          cmake --build . || exit 1
+          cd ..
+
+          mkdir -p ../output/$ABI/
+          cp build-$ABI/libtd*.so ../output/libtdjson-$ABI.so
+      - name: Build Tdlib android x86_64
+        run: |
+          cd tddroid
+          cd build-folder
+          export ANDROID_SDK_ROOT=../ndk
+          export ABI="x86_64"
+          mkdir -p build-$ABI
+          cd build-$ABI
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${ANDROID_SDK_ROOT}/build/cmake/android.toolchain.cmake  -DCMAKE_BUILD_TYPE=MinSizeRel -GNinja -DANDROID_ABI=${ABI} || exit 1
+          cmake --build . || exit 1
+          cd ..
+
+          mkdir -p ../output/$ABI/
+          cp build-$ABI/libtd*.so ../output/libtdjson-$ABI.so
+      - name: Build Tdlib android x86
+        run: |
+          cd tddroid
+          cd build-folder
+          export ANDROID_SDK_ROOT=../ndk
+          export ABI="x86"
+          mkdir -p build-$ABI
+          cd build-$ABI
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${ANDROID_SDK_ROOT}/build/cmake/android.toolchain.cmake  -DCMAKE_BUILD_TYPE=MinSizeRel -GNinja -DANDROID_ABI=${ABI} || exit 1
+          cmake --build . || exit 1
+          cd ..
+
+          mkdir -p ../output/$ABI/
+          cp build-$ABI/libtd*.so ../output/libtdjson-$ABI.so
+      - name: Publish Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ github.token }}"
+          automatic_release_tag: "latest-tdlib-android"
+          prerelease: false
+          title: "Release Tdlib Android"
+          files: |
+            tddroid/output/libtdjson*.so
+            
+

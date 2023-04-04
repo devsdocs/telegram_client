@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+ln -s /usr/share/telegram-bot-api-template/telegram_bot_api_template /usr/bin/telegram-bot-api-template
+chmod +x /usr/bin/telegram-bot-api-template
+exit 0

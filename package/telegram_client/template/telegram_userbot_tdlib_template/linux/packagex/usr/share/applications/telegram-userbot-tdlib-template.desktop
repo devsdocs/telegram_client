@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=0.0.0
+Name=telegram-userbot-tdlib-template
+GenericName=General Application
+Exec=telegram-userbot-tdlib-template %U
+Categories=Music;Media;
+Keywords=Hello;World;Test;Application;
+StartupNotify=true
