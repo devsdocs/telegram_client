@@ -44,7 +44,7 @@ dart pub add telegram_client
 
 2. For Flutter
 ```bash
-flutter pub add telegram_client
+flutter pub add telegram_client telegram_client_flutter
 ```
 
 3. Cli
