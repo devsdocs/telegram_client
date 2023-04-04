@@ -53,6 +53,12 @@ flutter pub add telegram_client
 dart pub global activate telegram_client
 ```
 
+### Add Library
+
+```dart
+import 'package:telegram_client/telegram_client.dart';
+```
+
 ### Docs
 
 ### Feature
@@ -79,21 +85,8 @@ dart pub global activate telegram_client
     - ✅️ support bot and userbot
     - ❌️ support telegram-bot-api local server
     - ❌️ support telegram database library ( Tdlib )
-    
-### To Do
-- [X] Add Humanize Api Tdlib
-- [X] Cross platform
-- [ ] Example Full Version
-- [ ] Mtproto support
-- [X] Multi Client
-- [ ] Example voice call
-- [X] Tdlib support
-- [X] Telegram Bot Api Support
-- [x] Tutorial Video
 
-🔜️ Support Other language code
-
-2. Build [Tdlib](https://github.com/td/tdlib)
+1. Build [Tdlib](https://github.com/td/tdlib)
 ## Add library on project
   if you make app telegram based this library, you must add native compiled library
 
