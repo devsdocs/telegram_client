@@ -59,6 +59,12 @@ dart pub global activate telegram_client
 import 'package:telegram_client/telegram_client.dart';
 ```
 
+### Use Template Agar Cepat Selesai
+
+```bash
+telegram_client create name_project --template telegram_bot_tdlib_template
+```
+
 ### Docs
 
 ### Feature
