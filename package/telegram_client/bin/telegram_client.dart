@@ -27,18 +27,24 @@ Future<Directory?> getPackageDirectory({
 }
 
 void main(List<String> args_raw) async {
-  Directory? base_directory_lib = (await getPackageDirectory(package_name: "package:telegram_client/telegram_client.dart"));
+  Directory? base_directory_lib = (await getPackageDirectory(
+      package_name: "package:telegram_client/telegram_client.dart"));
 
   if (base_directory_lib == null) {
     print("Maaf kami tidak bisa menemukan directory library");
     exit(0);
   }
 
-  Directory directory_lib = Directory(path.join(base_directory_lib.path, "lib"));
-  Directory directory_lib_template = Directory(path.join(base_directory_lib.path, "template"));
+  Directory directory_lib =
+      Directory(path.join(base_directory_lib.path, "lib"));
+  Directory directory_lib_template =
+      Directory(path.join(base_directory_lib.path, "template"));
 
   Args args = Args(args_raw);
-  String name_exe = path.basenameWithoutExtension(Platform.script.toString()).split(".").first;
+  String name_exe = path
+      .basenameWithoutExtension(Platform.script.toString())
+      .split(".")
+      .first;
   String help_msg = """
 A command-line ${name_exe}.
 
@@ -83,7 +89,8 @@ See https://youtube.com/@azkadev for detailed documentation and tutorial.
   }
   bool isSucces = false;
   if (first_args == "reload") {
-    Directory directory_pub = Directory(path.join(base_directory_lib.path, ".dart_tool", "pub"));
+    Directory directory_pub =
+        Directory(path.join(base_directory_lib.path, ".dart_tool", "pub"));
     if (directory_pub.existsSync()) {
       await directory_pub.delete(recursive: true);
     }
@@ -174,7 +181,8 @@ See https://youtube.com/@azkadev for detailed documentation and tutorial.
   }
 
   if (first_args == "version") {
-    print("telegram_client version: 0.0.4 (stable) on ${Platform.operatingSystem}");
+    print(
+        "telegram_client version: 0.0.4 (stable) on ${Platform.operatingSystem}");
     exit(0);
   }
 
@@ -188,7 +196,8 @@ Create a new ${name_exe} project.
 Usage: ${name_exe} create <directory> [arguments] 
   -f --force                      Force project generation, even if the target directory already exists.
   -t --template ${directory_lib_template.listSync().where((FileSystemEntity fileSystemEntity) {
-                  return (fileSystemEntity.statSync().type == FileSystemEntityType.directory);
+                  return (fileSystemEntity.statSync().type ==
+                      FileSystemEntityType.directory);
                 }).map((e) => path.basename(e.path)).toList().join("|")}
 
 Run "${name_exe} help" to see global options.
@@ -214,7 +223,8 @@ Run "${name_exe} help" to see global options.
 
     var str = directory_lib_template.list().listen(
       (FileSystemEntity fileSystemEntity) {
-        if (fileSystemEntity.statSync().type == FileSystemEntityType.directory) {
+        if (fileSystemEntity.statSync().type ==
+            FileSystemEntityType.directory) {
           dir_template.add(fileSystemEntity);
         }
       },
@@ -252,18 +262,22 @@ Run "${name_exe} help" to see global options.
       ];
       if (args["-t"] != null && (args["-t"] as String).isNotEmpty) {
         templates = args["-t"]!.split(",");
-      } else if (args["--template"] != null && (args["--template"] as String).isNotEmpty) {
+      } else if (args["--template"] != null &&
+          (args["--template"] as String).isNotEmpty) {
         templates = args["--template"]!.split(",");
       }
       if (templates.isEmpty) {
         templates = ["telegram_bot_api_template"];
       }
       String name = two_args;
-      bool is_force = (args.arguments.contains("-f") || args.arguments.contains("--force"));
-      Directory directory_create = Directory(path.join(Directory.current.path, name));
+      bool is_force =
+          (args.arguments.contains("-f") || args.arguments.contains("--force"));
+      Directory directory_create =
+          Directory(path.join(Directory.current.path, name));
       if (directory_create.existsSync()) {
         if (!is_force) {
-          print("Directory ${directory_create.path} already exists (use '--force' to force project generation)");
+          print(
+              "Directory ${directory_create.path} already exists (use '--force' to force project generation)");
           exit(0);
         }
       }
@@ -275,12 +289,15 @@ Run "${name_exe} help" to see global options.
         print("Creating ${name} using template ${templates.join(",")}...");
         for (var i = 0; i < templates.length; i++) {
           String template = templates[i];
-          Directory directory_template_package = Directory(path.join(directory_lib_template.path, template));
+          Directory directory_template_package =
+              Directory(path.join(directory_lib_template.path, template));
           if (!directory_template_package.existsSync()) {
-            print("Failed Creating ${name} using template ${template} karena tidak ada template");
+            print(
+                "Failed Creating ${name} using template ${template} karena tidak ada template");
             exit(0);
           }
-          Directory directory_create_folder = Directory(path.join(directory_create.path, template));
+          Directory directory_create_folder =
+              Directory(path.join(directory_create.path, template));
           if (!directory_create_folder.existsSync()) {
             await directory_create_folder.create(recursive: true);
           }
@@ -337,9 +354,11 @@ Run "${name_exe} help" to see global options.
         }
       } else {
         String template = templates.first;
-        Directory directory_template_package = Directory(path.join(directory_lib_template.path, template));
+        Directory directory_template_package =
+            Directory(path.join(directory_lib_template.path, template));
         if (!directory_template_package.existsSync()) {
-          print("Failed Creating ${name} using template ${template} karena tidak ada template");
+          print(
+              "Failed Creating ${name} using template ${template} karena tidak ada template");
           exit(0);
         }
 

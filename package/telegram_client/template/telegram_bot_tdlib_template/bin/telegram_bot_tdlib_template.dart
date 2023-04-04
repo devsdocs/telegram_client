@@ -1,6 +1,7 @@
-import 'package:telegram_bot_tdlib_template/telegram_bot_tdlib_template.dart'
-    as telegram_bot_tdlib_template;
+import "package:telegram_client/telegram_client.dart";
 
 void main(List<String> arguments) {
-  print('Hello world: ${telegram_bot_tdlib_template.calculate()}!');
+  Tdlib tg = Tdlib(pathTdl: "libtdjson.so");
+  tg.client_create();
+  tg.initIsolate();
 }
