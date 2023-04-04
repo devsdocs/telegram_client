@@ -6,12 +6,12 @@
 
 [![Pub Version](https://img.shields.io/pub/v/telegram_client?label=pub.dev&labelColor=333940&logo=dart)](https://pub.dev/packages/telegram_client)
 
-Telegram client dart library to make application telegram based flutter and userbot / bot support server side and client side
+Telegram client dart library untuk membuat telegram based flutter bot userbot bisa di server side dan client side
 
 ## Features
 
 - 🚀 Cross platform: mobile, desktop, browser, server
-- ⚡ Great performance
+- ⚡ Performance Bagus Dan Effisien
 - ❤️ Simple, powerful, & intuitive API
 
 ## Examples App use Telegram Client
@@ -34,10 +34,27 @@ https://user-images.githubusercontent.com/82513502/178153444-5f1a9074-8f43-48c1-
 
 ---
 
+### Install Library
+
+1. Install Library
+
+```bash
+dart pub add telegram_client
+```
+
+2. For Flutter
+```bash
+flutter pub add telegram_client
+```
+
+3. Cli
+
+```bash
+dart pub global activate telegram_client
+```
+
 ### Docs
 
-- Just Read On [Wiki](https://github.com/azkadev/telegram_client/wiki)
- 
 ### Feature
 - ```telegram client dart```
     - ✅️ support server side & client side
@@ -75,20 +92,6 @@ https://user-images.githubusercontent.com/82513502/178153444-5f1a9074-8f43-48c1-
 - [x] Tutorial Video
 
 🔜️ Support Other language code
-
-# Dart
-
-## Use library
-
-1. Install Library
-
-```bash
-dart pub add telegram_client
-```
-
-```bash
-flutter pub add telegram_client
-```
 
 2. Build [Tdlib](https://github.com/td/tdlib)
 ## Add library on project
