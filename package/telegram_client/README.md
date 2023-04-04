@@ -17,13 +17,13 @@ Telegram client dart library to make application telegram based flutter and user
 ## Examples App use Telegram Client
 
 
-1. [Azkagram](https://github.com/azkadev/azkagram)
+1. Azkagram
 
 <img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/home.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/205481759-b6815e2f-bd5d-4d72-9570-becd3829dd36.png" width="250px"><img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/me.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319331-9e96fbe7-3e66-44b2-8577-f6685d86a368.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319541-19a60407-f410-4e95-8ac0-d0da2eaf2457.png" width="250px">
 
 ## Examples Bot use Telegram Client
 
-1. [AzkadevBot](https://t.me/azkadevbot)
+1. AzkadevBot
   Telegram clone bot and userbot
 
 <img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_1.jpg" width="350px"><img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_2.png" width="350"><img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_3.png" width="350px"><img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_4.png" width="350px">
@@ -31,52 +31,6 @@ Telegram client dart library to make application telegram based flutter and user
 2. Free Run User Bot
  Cloning userbot gratis tanpa server
 https://user-images.githubusercontent.com/82513502/178153444-5f1a9074-8f43-48c1-bb12-ab1493d17143.mp4
-
-3. [Specta-Bot-Telegram]()
-   Open source bot telegram sekaligus ecosystem dari specta
-
-   <p align="center">
-    <a href="https://github.com/azkadev">
-        <img src="https://telegra.ph/file/e90bdeab8390b8c0d9df2.png" alt="Specta"
-            width="312"
-            height="312">
-    </a>
-    <br>
-    <a href="https://youtube.com/c/galaxeus">
-        <img
-            src="https://raw.githubusercontent.com/azkadev/azkadev/main/assets/images/powered_galaxeus.png"
-            alt="galaxeus"
-            width="350"
-            height="80"
-        >
-    </a>
-    <br>
-    <b>Pluggable Telegram Bot</b>
-    <br>
-</p>
-
-4. [Specta-User-Telegram]()
-   Open source User telegram sekaligus ecosystem dari specta
-
-   <p align="center">
-    <a href="https://github.com/azkadev">
-        <img src="https://telegra.ph/file/e90bdeab8390b8c0d9df2.png" alt="Specta"
-            width="312"
-            height="312">
-    </a>
-    <br>
-    <a href="https://youtube.com/c/galaxeus">
-        <img
-            src="https://raw.githubusercontent.com/azkadev/azkadev/main/assets/images/powered_galaxeus.png"
-            alt="galaxeus"
-            width="350"
-            height="80"
-        >
-    </a>
-    <br>
-    <b>Pluggable Telegram User</b>
-    <br>
-</p>
 
 ---
 
