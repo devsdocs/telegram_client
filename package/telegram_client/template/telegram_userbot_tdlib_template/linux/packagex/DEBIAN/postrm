@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-rm /usr/bin/telegram-userbot-tdlib-template 
-exit 0

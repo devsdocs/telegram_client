@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-ln -s /usr/share/telegram-userbot-tdlib-template/telegram_userbot_tdlib_template /usr/bin/telegram-userbot-tdlib-template
-chmod +x /usr/bin/telegram-userbot-tdlib-template
-exit 0
