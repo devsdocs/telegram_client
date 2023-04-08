@@ -100,11 +100,9 @@ class TelegramBotApiTemplate {
           tg: tg,
         );
       }
-
       return {"@type": "ok"};
     } catch (e, stack) {
       print("${e.toString()}, ${stack.toString()}");
-
       return {"@type": "error"};
     }
   }
