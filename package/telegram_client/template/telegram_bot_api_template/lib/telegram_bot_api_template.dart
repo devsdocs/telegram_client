@@ -2,29 +2,23 @@
 
 import 'package:alfred/alfred.dart';
 import 'package:galaxeus_lib/galaxeus_lib.dart';
+import 'package:telegram_bot_api_template/database/database.dart';
+import 'package:telegram_bot_api_template/scheme/scheme.dart';
 import 'package:telegram_bot_api_template/telegram_bot_api_template/telegram_bot_api_template.dart';
+import 'package:telegram_bot_api_template/update_bot.dart';
 import 'package:telegram_client/telegram_client.dart';
-
-class UpdateBot {
-  Map body;
-  Map query;
-  String type;
-  UpdateBot({
-    required this.body,
-    required this.query,
-    required this.type,
-  });
-}
 
 class TelegramBotApiTemplate {
   TelegramBotApi tg;
   Alfred server;
   EventEmitter eventEmitter;
   String event_update_bot;
+  DatabaseTg databaseTg;
   TelegramBotApiTemplate({
     required this.tg,
     required this.server,
     required this.eventEmitter,
+    required this.databaseTg,
     this.event_update_bot = "tg_bot_api",
   });
 
@@ -70,18 +64,23 @@ class TelegramBotApiTemplate {
     try {
       Map query = updateBot.query;
       Map update = updateBot.body;
+      TgClientData tgClientData = TgClientData({});
 
       Map update_message = {};
       if (update["inline_query"] is Map) {
         return await inlineQuery(
           update["inline_query"],
           updateBot: updateBot,
+          tgClientData: tgClientData,
+          databaseTg: databaseTg,
           tg: tg,
         );
       } else if (update["callback_query"] is Map) {
         return await callbackQuery(
           update["callback_query"],
           updateBot: updateBot,
+          tgClientData: tgClientData,
+          databaseTg: databaseTg,
           tg: tg,
         );
       } else if (update["edited_channel_post"] is Map) {
@@ -97,6 +96,8 @@ class TelegramBotApiTemplate {
         return await updateMessage(
           update_message,
           updateBot: updateBot,
+          tgClientData: tgClientData,
+          databaseTg: databaseTg,
           tg: tg,
         );
       }

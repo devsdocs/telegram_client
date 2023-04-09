@@ -48,4 +48,3 @@ class MyApp extends State<App> {
     );
   }
 }
-
