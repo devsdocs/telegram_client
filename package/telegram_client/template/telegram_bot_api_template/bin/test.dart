@@ -85,17 +85,11 @@ void main(List<String> arguments) async {
       "media": [
         {
           "type": "document",
-          "media": tg.buffer(bytes,
-              name: path.basename(
-                file.path,
-              )),
+          "media":file
         },
         {
           "type": "document",
-          "media": tg.buffer(bytes,
-              name: path.basename(
-                file.path,
-              )),
+          "media": file
         }
       ],
     },
