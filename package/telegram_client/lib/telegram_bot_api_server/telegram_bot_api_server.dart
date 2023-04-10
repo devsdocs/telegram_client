@@ -1,9 +1,10 @@
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps
 
 import 'package:universal_io/io.dart';
+import "ffi/telegram_bot_api_server.dart";
 
 /// telegram bot api server
-class TelegramBotApiServer {
+class TelegramBotApiServer extends LibTelegramBotApi {
   /// if you want bot server local use this
   TelegramBotApiServer();
 

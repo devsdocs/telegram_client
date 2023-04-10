@@ -1,3 +1,11 @@
+## 0.4.5
+
+- Menambahkan Support Send File di telegram bot api
+
+## 0.4.4
+
+- add support run telegram bot api from shared library
+
 ## 0.4.3
 
 - update template

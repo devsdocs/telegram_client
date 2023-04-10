@@ -2,7 +2,7 @@ name: telegram_bot_api_template
 description: A sample command-line application.
 version: 0.0.0
 repository: https://github.com/azkadev/telegram_client.git
-
+publish_to: none
 funding:
  - https://github.com/azkadev
 
@@ -10,7 +10,7 @@ environment:
   sdk: '>=2.19.4 <3.0.0'
 
 dependencies:
-  telegram_client: ^0.4.2
+  telegram_client: ^0.4.5
   path: ^1.8.3
   galaxeus_lib: ^0.0.61
   alfred: ^1.0.1+1

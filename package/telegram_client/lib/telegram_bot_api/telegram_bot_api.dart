@@ -185,9 +185,33 @@ class TelegramBotApi {
           }
           try {
             if (keyForm.contains(key)) {
-              parameters[key] = typeFile(value)["data"];
-              if (parameters[key] is String == false) {
-                is_form = true;
+              if (key == "media") {
+                if (value is List) {
+                  for (var i = 0; i < value.length; i++) {
+                    Map value_data = value[i];
+                    value_data.forEach((key_loop, value_loop) {
+                      if (key_loop == "media") {
+                        if (value_loop is File) {
+                          value[i][key_loop] = value_loop.uri.toString();
+                        } else {
+                          try {
+                            value[i][key_loop] = typeFile(value_loop)["data"];
+                            if (value[i][key_loop] is String == false) {
+                              is_form = true;
+                            }
+                          } catch (e) {}
+                        }
+                      }
+                    });
+                  }
+                }
+              } else if (value is File) {
+                parameters[key] = value.uri.toString();
+              } else {
+                parameters[key] = typeFile(value)["data"];
+                if (parameters[key] is String == false) {
+                  is_form = true;
+                }
               }
             }
           } catch (e) {}
@@ -201,7 +225,9 @@ class TelegramBotApi {
       var form = MultipartRequest("post", Uri.parse(url));
 
       parameters.forEach((key, value) async {
-        if (value is Map) {
+        if (value is File) {
+          form.fields[key] = value.uri.toString();
+        } else if (value is Map) {
           if (value["is_post_file"] == true) {
             var files = await MultipartFile.fromPath(key, value["file_path"]);
             form.files.add(files);
@@ -222,20 +248,22 @@ class TelegramBotApi {
             value_data.forEach((key_loop, value_loop) {
               if (key_loop == "media" && value_loop is Map) {
                 if (value_loop["is_post_buffer"] == true) {
+                  String name_file = "file_${i}_${value_loop["name"]}";
                   var files = MultipartFile.fromBytes(
-                    "${key}[${i}][${key_loop}]",
+                    name_file,
                     value_loop["buffer"],
                     filename: value_loop["name"],
                     contentType: value_loop["content_type"],
                   );
-
                   form.files.add(files);
-                  // form.fields[key_loop] = files;
+                  jsonData[key_loop] = "attach://${name_file}";
                 } else {
-                  jsonData[key_loop] = value.toString();
+                  jsonData[key_loop] = value_loop.toString();
                 }
+              } else if (value_loop is File) {
+                jsonData[key_loop] = value_loop.uri.toString();
               } else {
-                jsonData[key_loop] = value.toString();
+                jsonData[key_loop] = value_loop.toString();
               }
             });
             values.add(jsonData);
