@@ -5,4 +5,4 @@ cmake_minimum_required(VERSION 3.10)
 
 set(PROJECT_NAME "telegram_bot_api_flutter")
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/telegram-bot-api/telegram-bot-api-cli" DESTINATION "bin" COMPONENT Runtime)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/telegram-bot-api/telegram-bot-api" DESTINATION "bin" COMPONENT Runtime)

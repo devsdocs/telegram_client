@@ -68,6 +68,7 @@ class LibTdJson {
     "start": true,
   };
   late final String path_tdlib;
+  bool is_cli;
   bool is_android = Platform.isAndroid;
   List<TdlibClient> clients = [];
   int client_id = 0;
@@ -80,6 +81,7 @@ class LibTdJson {
   LibTdJson({
     String? pathTdl,
     Map? clientOption,
+    this.is_cli = false,
     this.event_invoke = "invoke",
     this.event_update = "update",
     EventEmitter? eventEmitter,
@@ -143,7 +145,11 @@ class LibTdJson {
 
   ffi.DynamicLibrary get tdLib {
     if (Platform.isIOS || Platform.isMacOS) {
-      return ffi.DynamicLibrary.process();
+      if (is_cli) {
+        return ffi.DynamicLibrary.open(path_tdlib);
+      } else {
+        return ffi.DynamicLibrary.process();
+      }
     } else {
       return ffi.DynamicLibrary.open(path_tdlib);
     }

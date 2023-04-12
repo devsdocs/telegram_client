@@ -87,6 +87,7 @@ class Tdlib extends LibTdJson {
   Tdlib({
     super.pathTdl,
     super.clientOption,
+    super.is_cli,
     int? clientId,
     Duration? invokeTimeOut,
     super.event_invoke = "invoke",

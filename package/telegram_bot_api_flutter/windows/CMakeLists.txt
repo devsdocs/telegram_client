@@ -10,8 +10,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 
 # begin td
 set(dll_path "${CMAKE_CURRENT_SOURCE_DIR}/telegram-bot-api")
-install(FILES "${dll_path}/libcrypto-1_1-x64.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
-install(FILES "${dll_path}/libssl-1_1-x64.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
-install(FILES "${dll_path}/tdjson.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
+install(FILES "${dll_path}/libcrypto-3.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
+install(FILES "${dll_path}/libssl-3.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
+install(FILES "${dll_path}/telegram-bot-api.exe" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
 install(FILES "${dll_path}/zlib1.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
 # end td 

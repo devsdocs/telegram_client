@@ -83,14 +83,8 @@ void main(List<String> arguments) async {
     parameters: {
       "chat_id": 5308590964,
       "media": [
-        {
-          "type": "document",
-          "media":file
-        },
-        {
-          "type": "document",
-          "media": file
-        }
+        {"type": "document", "media": file},
+        {"type": "document", "media": file}
       ],
     },
     is_form: false,

@@ -1,3 +1,7 @@
+## 0.4.6
+
+- Test fix support cli macos
+
 ## 0.4.5
 
 - Menambahkan Support Send File di telegram bot api

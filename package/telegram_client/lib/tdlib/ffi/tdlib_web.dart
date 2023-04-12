@@ -66,6 +66,7 @@ class LibTdJson {
     "database_key": "",
     "start": true,
   };
+  bool is_cli;
   late final String path_tdlib;
   bool is_android = Platform.isAndroid;
   List<TdlibClient> clients = [];
@@ -80,6 +81,7 @@ class LibTdJson {
   LibTdJson({
     String? pathTdl,
     Map? clientOption,
+    this.is_cli = false,
     this.event_invoke = "invoke",
     this.event_update = "update",
     EventEmitter? eventEmitter,
