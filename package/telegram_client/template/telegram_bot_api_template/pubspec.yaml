@@ -10,9 +10,10 @@ environment:
   sdk: '>=2.19.4 <3.0.0'
 
 dependencies:
-  telegram_client: ^0.4.5
+  telegram_client:
+   path: ../../
   path: ^1.8.3
-  galaxeus_lib: ^0.0.61
+  galaxeus_lib: ^0.0.62
   alfred: ^1.0.1+1
   supabase_client: ^0.0.18
   xendit: ^0.0.13

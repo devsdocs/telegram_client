@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-ln -s /usr/share/web-template/web /usr/bin/web-template
-chmod +x /usr/bin/web-template
-exit 0

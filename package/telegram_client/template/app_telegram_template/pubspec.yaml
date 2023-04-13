@@ -2,6 +2,7 @@ name: app_telegram_template
 description: A new Flutter project.
 version: 0.0.0
 
+publish_to: none
 environment:
   sdk: '>=2.19.2 <3.0.0'
 
@@ -9,12 +10,13 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  galaxeus_lib: ^0.0.61
+  galaxeus_lib: ^0.0.62
   url_launcher: ^6.1.10
   universal_io: ^2.2.0
   galaxeus_lib_flutter: ^0.0.6
   cool_alert: ^2.0.1
-  telegram_client: ^0.4.5
+  telegram_client:
+   path: ../../
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5
 

@@ -6,7 +6,8 @@
 
 [![Pub Version](https://img.shields.io/pub/v/telegram_client?label=pub.dev&labelColor=333940&logo=dart)](https://pub.dev/packages/telegram_client)
 
-Telegram client dart library untuk membuat telegram based flutter bot userbot bisa di server side dan client side
+
+Telegram client dart library untuk membuat telegram based flutter bot userbot bisa di server side dan client side, library ini 100% mudah di gunakan untuk membuat multi client sekaligus karena di library Telegram Client ini kamu hanya perlu memanggil fungsi saja dan update automatis akan di terima di event emitter
 
 ## Features
 
@@ -14,23 +15,38 @@ Telegram client dart library untuk membuat telegram based flutter bot userbot bi
 - ⚡ Performance Bagus Dan Effisien
 - ❤️ Simple, powerful, & intuitive API
 
+## Quick Review
+
+  Video singkat cara menggunakan library ini untuk membuat project yang ingin anda bikin dengan template yang sudah saya buat.
+
+#### 1. Create And Run Application
+
+#### 2. Create And Run Telegram Userbot Tdlib
+
+#### 3. Create And Run Telegram Bot Api
+
+
 ## Examples App use Telegram Client
 
 
 1. Azkagram
+    
+ Telegram Application dengan menambahkan design baru serta fitur userbot dan fitur lain yang tidak di sediakan secara resmi oleh telegram project ini sudah di close source code karena banyak yang berusaha membuat app ini untuk melakukan tindakan kriminal (spam, scam), Jika anda ingin membuat silahkan pelajari library ini.
 
 <img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/home.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/205481759-b6815e2f-bd5d-4d72-9570-becd3829dd36.png" width="250px"><img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/me.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319331-9e96fbe7-3e66-44b2-8577-f6685d86a368.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319541-19a60407-f410-4e95-8ac0-d0da2eaf2457.png" width="250px">
+
+
+2. GLX Socmed<br>
+  <!-- Application Social Media dengan fitur menjalankan berbagai bot dari social media popular seperti Telegram, Twitter, Whatsapp, Instagram, Github, Youtube, App Project Ini Berbayar Perbulan cukup 10k. -->
+
+  
 
 ## Examples Bot use Telegram Client
 
 1. AzkadevBot
-  Telegram clone bot and userbot
+  Telegram bot Berbayar complex yang bisa menghandle banyak group, ch, private, dengan banyak fitur payment gateway, Automation Store, clone userbot bot, dibikin dengan library ini tanpa campur bahasa code lain, Bot ini berjalan hanya menggunakan < 100mb di server sangat ringan karena menggunakan dart
 
 <img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_1.jpg" width="350px"><img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_2.png" width="350"><img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_3.png" width="350px"><img src="https://github.com/azkadev/telegram_client/raw/main/assets/example/bot/azkadevbot_4.png" width="350px">
-
-2. Free Run User Bot
- Cloning userbot gratis tanpa server
-https://user-images.githubusercontent.com/82513502/178153444-5f1a9074-8f43-48c1-bb12-ab1493d17143.mp4
 
 ---
 
@@ -44,7 +60,7 @@ dart pub add telegram_client
 
 2. For Flutter
 ```bash
-flutter pub add telegram_client telegram_client_flutter
+flutter pub add telegram_client telegram_client_flutter telegram_bot_api_flutter
 ```
 
 3. Cli
@@ -52,6 +68,15 @@ flutter pub add telegram_client telegram_client_flutter
 ```bash
 dart pub global activate telegram_client
 ```
+
+4. Setup
+
+Setup automatis agar kamu tidak ribet compile tdlib, telegram-bot-api
+
+```bash
+telegram_client setup -f
+```
+
 
 ### Add Library
 
@@ -67,7 +92,7 @@ telegram_client create name_project --template telegram_bot_tdlib_template
 
 ### Docs
 
-### Feature
+### Library Feature
 - ```telegram client dart```
     - ✅️ support server side & client side
     - ✅️ support multi token ( bot / userbot ) 
@@ -92,9 +117,18 @@ telegram_client create name_project --template telegram_bot_tdlib_template
     - ❌️ support telegram-bot-api local server
     - ❌️ support telegram database library ( Tdlib )
 
-1. Build [Tdlib](https://github.com/td/tdlib)
 ## Add library on project
-  if you make app telegram based this library, you must add native compiled library
+  Jika anda ingin menggunakan library ini pastikan anda sudah bisa mengcompile tdlib ya
+
+- Automatis
+  Jika anda tidak tahu cara mengcompile gunakan ini
+```bash
+flutter pub add telegram_client_flutter
+```
+ 
+- Manual
+
+Untuk menambahkan library kamu  wajib mengcompile ke platform yang ingin kamu buat Build [Tdlib](https://github.com/td/tdlib)
 
 ### Android
 Copy `.so` files from archive to `example/android/app/main/jniLibs`:
@@ -204,6 +238,9 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/tdlib/libtdjson.so" DESTINATION "${IN
 - [Telegram Bot Api](#telegrambotapi)
 - [Mtproto](#mtproto)
 - [Tdlib-Official](https://core.telegram.org/tdlib/docs/classtd_1_1_tl_object.html)
+
+---
+
 ## Tdlib
 gunakan ini untuk membuat userbot / bot / application based tdlib,
 quickstart:
@@ -227,14 +264,17 @@ void main(List<String> args) async {
 }
 ```
 - multi
+
+Di library ini kamu bisa membuat banyak client tanpa perlu repot menambahkan banyak kode sangat simpel dan ringkas menjadi satu
+
 ```dart
 import 'dart:io';
 import 'package:telegram_client/telegram_client.dart';
 void main(List<String> args) async {
   var path = Directory.current.path;
   Tdlib tg = Tdlib(pathTdl:"./tdjson.so", clientOption:{
-    'api_id': 12345678,
-    'api_hash': 'asaskaoskaoskoa',
+    'api_id': 12345678, /// telegram_api_id
+    'api_hash': 'asaskaoskaoskoa', /// telegram_api_hash
     'database_directory': "$path/user_0/",
     'files_directory': "$path/user_0/",
   });
@@ -248,8 +288,8 @@ void main(List<String> args) async {
   });
   await tg.initIsolate();
   await tg.initIsolateNewClient(clientId: tg.client_create(), clientOption: {
-    'database_directory': "$path/user_1/",
-    'files_directory': "$path/user_1/",
+    'database_directory': "${path}/user_1/",
+    'files_directory': "${path}/user_1/",
   });
 }
 ```
@@ -258,7 +298,7 @@ void main(List<String> args) async {
 
 | No |      key       |                             value                              | Deskripsi                                         | `required` |
 |----|:--------------:|:--------------------------------------------------------------:|:--------------------------------------------------|:----------:|
-| 1  |  `pathTdl`  |                       String path tdlib                        |                                                   |   `yes`    |
+| 1  |   `pathTdl`    |                       String path tdlib                        |                                                   |   `yes`    |
 | 2  | `clientOption` | [object](https://core.telegram.org/bots/api#available-methods) | parameters di butuhkan jika method membutuhkannya |    `no`    |
 - examples
 ```js
@@ -338,11 +378,8 @@ tg.invokeSync({
 ---
 ### UpdateTd
 
-#### raw
-#### raw_api_light
-#### raw_api
-#### message
-#### channel_post
+#### raw 
+
 ---
 ### methods
 more method check [tdlib-docs]()
@@ -357,6 +394,8 @@ more method check [tdlib-docs]()
 |----|:---------:|:-------------:|:----------|:----------:|
 | 1  | `chat_id` | String or int |           |   `yes`    |
 | 2  |  `photo`  |    String     |           |   `yes`    |
+
+---
 
 ## TelegramBotApi
 Gunakan ini untuk berinteraksi dengan api telegram, semua method disini sudah auto update
@@ -409,6 +448,8 @@ tg.request("sendMessage", parameters:{
   "text": "Hello world"
 });
 ```
+
+---
 
 ## MtProto
 Untuk mtproto telegram ini belum jadi ya karena saya belum mengerti cara connect mtproto
@@ -463,8 +504,7 @@ void main() async {
 
 
 
-
-
+----
 - Tags:
   #telegram #telegram_client #tdlib #mtproto #telegram_bot_api #telegram_dart #telegram_flutter #telegram_clone #telegram_userbot #telegram_bot
 

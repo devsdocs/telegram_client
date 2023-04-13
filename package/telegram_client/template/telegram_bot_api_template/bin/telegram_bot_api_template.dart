@@ -9,8 +9,7 @@ import 'package:telegram_bot_api_template/database/database.dart';
 import 'package:telegram_bot_api_template/telegram_bot_api_template.dart';
 import 'package:telegram_client/telegram_client.dart';
 
-import "package:telegram_bot_api_template/database/scheme/scheme.dart"
-    as isar_scheme;
+import "package:telegram_bot_api_template/database/scheme/scheme.dart" as isar_scheme;
 import "package:path/path.dart" as path;
 import "package:isar/isar.dart" as isar;
 import 'package:xendit/xendit.dart';
@@ -28,8 +27,7 @@ void main(List<String> arguments) async {
   bool is_local_bot_api = (Platform.environment["is_local_bot_api"] != null);
   int bot_api_port = int.parse(Platform.environment["bot_api_port"] ?? "9000");
   int api_id = int.tryParse(Platform.environment["api_id"] ?? "94575") ?? 94575;
-  String api_hash =
-      Platform.environment["api_hash"] ?? "a3406de8d171bb422bb6ddf3bbd800e2";
+  String api_hash = Platform.environment["api_hash"] ?? "a3406de8d171bb422bb6ddf3bbd800e2";
   String url_webhook = Platform.environment["tg_bot_webhook"] ?? "";
   String xen_key_api = Platform.environment["xen_key_api"] ?? "";
   String supabase_id = Platform.environment["supabase_id"] ?? "";
@@ -70,8 +68,7 @@ void main(List<String> arguments) async {
   }
 
   EventEmitter eventEmitter = EventEmitter();
-  TelegramBotApi tg =
-      TelegramBotApi(token_bot, clientOption: telegram_bot_api_option);
+  TelegramBotApi tg = TelegramBotApi(token_bot, clientOption: telegram_bot_api_option);
   Map get_me = await tg.request("getMe");
 
   print(jsonToMessage(get_me["result"], jsonFullMedia: {}));
@@ -90,8 +87,7 @@ void main(List<String> arguments) async {
   Alfred server = Alfred();
 
   Xendit xendit = Xendit(apiKey: xen_key_api);
-  supabase_client.Database supabase_db =
-      supabase_client.Database(supabase_id, supabase_key);
+  supabase_client.Database supabase_db = supabase_client.Database(supabase_id, supabase_key);
 
   // return print(tg_bot_db_dir.path);
   isar.Isar isar_db = await isar.Isar.open(

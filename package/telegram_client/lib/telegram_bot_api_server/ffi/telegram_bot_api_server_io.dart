@@ -9,10 +9,8 @@ class Args {
   List<String> args;
   Args(this.args);
   Pointer<Pointer<Utf8>> toNativeList() {
-    List<Pointer<Utf8>> utf8PointerList =
-        args.map((str) => str.toNativeUtf8()).toList();
-    final Pointer<Pointer<Utf8>> pointerPointer =
-        malloc.allocate(utf8PointerList.length);
+    List<Pointer<Utf8>> utf8PointerList = args.map((str) => str.toNativeUtf8()).toList();
+    final Pointer<Pointer<Utf8>> pointerPointer = malloc.allocate(utf8PointerList.length);
     args.asMap().forEach((index, utf) {
       pointerPointer[index] = utf8PointerList[index];
     });
@@ -20,10 +18,12 @@ class Args {
   }
 }
 
-typedef NativeMainFunction = Int Function(
-    Int argc, Pointer<Pointer<Utf8>> args);
+typedef NativeMainFunction = Int Function(Int argc, Pointer<Pointer<Utf8>> args);
 
-typedef DartMainFunction = int Function(int argc, Pointer<Pointer<Utf8>> args);
+typedef DartMainFunction = int Function(
+  int argc,
+  Pointer<Pointer<Utf8>> args,
+);
 
 class LibTelegramBotApi {
   LibTelegramBotApi();
@@ -52,8 +52,6 @@ class LibTelegramBotApi {
       "./telegram-bot-api",
       ...arguments,
     ]);
-    return dynamicLibrary
-        .lookupFunction<NativeMainFunction, DartMainFunction>("cli")
-        .call(args_test.args.length, args_test.toNativeList());
+    return dynamicLibrary.lookupFunction<NativeMainFunction, DartMainFunction>("cli").call(args_test.args.length, args_test.toNativeList());
   }
 }

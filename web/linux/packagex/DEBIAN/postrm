@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-rm /usr/bin/web-template 
-exit 0

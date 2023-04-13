@@ -6,14 +6,12 @@ class TgUtils {
   TgUtils();
 
   /// ccreate offset for tl
-  static List<String> splitByLength(String text, int length,
-      {bool ignoreEmpty = false}) {
+  static List<String> splitByLength(String text, int length, {bool ignoreEmpty = false}) {
     List<String> pieces = [];
 
     for (int i = 0; i < text.length; i += length) {
       int offset = i + length;
-      String piece =
-          text.substring(i, offset >= text.length ? text.length : offset);
+      String piece = text.substring(i, offset >= text.length ? text.length : offset);
 
       if (ignoreEmpty) {
         piece = piece.replaceAll(RegExp(r'\s+'), '');
@@ -25,8 +23,10 @@ class TgUtils {
   }
 
   /// ccreate offset for tl
-  static List<int> createOffset(
-      {required int totalCount, required int limitCount}) {
+  static List<int> createOffset({
+    required int totalCount,
+    required int limitCount,
+  }) {
     late int offset = 0;
     late List<int> listOffset = [0];
     for (var i = 0; i < (totalCount ~/ limitCount).toInt(); i++) {

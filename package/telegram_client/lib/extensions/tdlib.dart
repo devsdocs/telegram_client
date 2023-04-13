@@ -1,8 +1,8 @@
 // ignore_for_file: non_constant_identifier_names, empty_catches, unused_local_variable, unnecessary_brace_in_string_interps
 
 import 'dart:async';
-
-import 'package:telegram_client/tdlib/tdlib.dart';
+ 
+import 'package:telegram_client/tdlib/tdlib_core.dart';
 import 'package:telegram_client/util/util.dart';
 
 /// extension tdlib for make

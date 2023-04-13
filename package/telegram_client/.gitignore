@@ -15,3 +15,5 @@ tg_dir
 *.deb
 *.binlog
 *.exe
+*.so
+telegram-bot-api
