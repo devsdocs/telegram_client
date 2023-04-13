@@ -28,7 +28,6 @@ import 'dart:async';
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:telegram_client/isolate/isolate.dart';
 import 'package:telegram_client/scheme/scheme.dart';
-import 'package:telegram_client/tdlib/tdlib_isolate_data.dart';
 import 'package:telegram_client/tdlib/tdlib_isolate_receive_data.dart';
 import 'package:telegram_client/tdlib/update_td.dart';
 import 'package:universal_io/io.dart';
@@ -196,7 +195,7 @@ class LibTdJson {
     Map client_new_option = client_option.clone();
     if (clientOption != null) {
       client_new_option.addAll(clientOption);
-    } 
+    }
   }
 
   /// add this for multithread new client on flutter apps
