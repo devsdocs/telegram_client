@@ -122,13 +122,13 @@ void main(List<String> arguments) async {
     directory: tg_bot_db_dir,
   );
 
-  TelegramBotApiTemplate telegramBotApiTemplate = TelegramBotApiTemplate(
+  TelegramBotApiTemplate telegram_bot_api_template = TelegramBotApiTemplate(
     tg: tg,
     server: server,
     eventEmitter: eventEmitter,
     databaseTg: databaseTg,
   );
-  telegramBotApiTemplate.run();
+  telegram_bot_api_template.run();
 
   await server.listen(
     port,

@@ -8,7 +8,8 @@ import 'dart:io';
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:telegram_userbot_tdlib_template/utils/utils.dart';
 import 'package:telegram_client/telegram_client.dart';
-import "package:telegram_userbot_tdlib_template/update_tdlib/update_tdlib.dart" as update_tdlib;
+import "package:telegram_userbot_tdlib_template/update_tdlib/update_tdlib.dart"
+    as update_tdlib;
 import "package:path/path.dart" as path;
 
 enum AuthorizationStateType {
@@ -50,7 +51,9 @@ class TelegramUserbotTdlibTemplate {
   }
 
   Future<Map?> userbot({
-    required FutureOr<void> Function(int client_id, String name_client, AuthorizationStateType authorizationStateType) onAuthState,
+    required FutureOr<void> Function(int client_id, String name_client,
+            AuthorizationStateType authorizationStateType)
+        onAuthState,
   }) async {
     //// handler update
     tg.on(tg.event_invoke, (UpdateTd update) async {
@@ -71,7 +74,8 @@ class TelegramUserbotTdlibTemplate {
       print(update.raw);
       try {
         String name_client = update.client_option["name_client"];
-        int bot_user_id = parserBotUserIdFromToken(update.client_option["token_bot"]);
+        int bot_user_id =
+            parserBotUserIdFromToken(update.client_option["token_bot"]);
         int current_admin_user_id = 0;
         int current_from_client_client_id = 0;
         String current_from_client_type = "core";
@@ -86,14 +90,17 @@ class TelegramUserbotTdlibTemplate {
           current_from_client_type = update.client_option["from_client_type"];
         }
         if (update.client_option["from_client_client_id"] is int) {
-          current_from_client_client_id = update.client_option["from_client_client_id"];
+          current_from_client_client_id =
+              update.client_option["from_client_client_id"];
         }
         if (update.client_option["admin_user_id"] is int) {
           current_admin_user_id = update.client_option["admin_user_id"];
         }
 
         if (update.raw["@type"] == "error") {
-          if (RegExp(r"Too Many Requests: retry after [0-9]+", caseSensitive: false).hasMatch(update.raw["message"])) {
+          if (RegExp(r"Too Many Requests: retry after [0-9]+",
+                  caseSensitive: false)
+              .hasMatch(update.raw["message"])) {
             if (is_bot) {
               print("exit");
               return null;
@@ -125,14 +132,22 @@ class TelegramUserbotTdlibTemplate {
             var authStateType = update.raw["authorization_state"]["@type"];
             if (tg.client_id != update.client_id) {
               update.client_option["database_key"] = telegram_database_key;
-              await tg.initClient(update, clientId: update.client_id, tdlibParameters: update.client_option, isVoid: true);
+              await tg.initClient(update,
+                  clientId: update.client_id,
+                  tdlibParameters: update.client_option,
+                  isVoid: true);
             } else {
-              await tg.initClient(update, clientId: update.client_id, tdlibParameters: update.client_option, isVoid: true);
+              await tg.initClient(update,
+                  clientId: update.client_id,
+                  tdlibParameters: update.client_option,
+                  isVoid: true);
             }
 
             if (authStateType == "authorizationStateWaitRegistration") {
-              if (update.raw["authorization_state"]["terms_of_service"] is Map) {
-                Map terms_of_service = update.raw["authorization_state"]["terms_of_service"] as Map;
+              if (update.raw["authorization_state"]["terms_of_service"]
+                  is Map) {
+                Map terms_of_service = update.raw["authorization_state"]
+                    ["terms_of_service"] as Map;
                 if (terms_of_service["text"] is Map) {
                   await tg.invoke(
                     "registerUser",
@@ -153,14 +168,17 @@ class TelegramUserbotTdlibTemplate {
               await tg.exitClientById(update.client_id);
             }
             if (authStateType == "authorizationStateWaitPhoneNumber") {
-              await onAuthState(update.client_id, name_client, AuthorizationStateType.phone_number);
+              await onAuthState(update.client_id, name_client,
+                  AuthorizationStateType.phone_number);
             }
 
             if (authStateType == "authorizationStateWaitCode") {
-              await onAuthState(update.client_id, name_client, AuthorizationStateType.code);
+              await onAuthState(
+                  update.client_id, name_client, AuthorizationStateType.code);
             }
             if (authStateType == "authorizationStateWaitPassword") {
-              await onAuthState(update.client_id, name_client, AuthorizationStateType.password);
+              await onAuthState(update.client_id, name_client,
+                  AuthorizationStateType.password);
             }
             if (authStateType == "authorizationStateReady") {
               var getMe = await tg.getMe(
@@ -219,7 +237,8 @@ class TelegramUserbotTdlibTemplate {
           //
         }
 
-        if (update.raw["@type"] == "updateNewCallbackQuery" || update.raw["@type"] == "updateNewInlineCallbackQuery") {
+        if (update.raw["@type"] == "updateNewCallbackQuery" ||
+            update.raw["@type"] == "updateNewInlineCallbackQuery") {
           //
           Map? msg = await update_tdlib.apiUpdateCallbackQuery(
             update,
@@ -263,8 +282,10 @@ class TelegramUserbotTdlibTemplate {
           clientId: tg.client_id,
           clientOption: {
             "name_client": name_client,
-            'database_directory': path.join(telegram_directory.path, "${name_client}"),
-            'files_directory': path.join(telegram_directory.path, "${name_client}"),
+            'database_directory':
+                path.join(telegram_directory.path, "${name_client}"),
+            'files_directory':
+                path.join(telegram_directory.path, "${name_client}"),
           },
         );
       } else {
@@ -272,8 +293,10 @@ class TelegramUserbotTdlibTemplate {
           clientId: tg.client_create(),
           clientOption: {
             "name_client": name_client,
-            'database_directory': path.join(telegram_directory.path, "${name_client}"),
-            'files_directory': path.join(telegram_directory.path, "${name_client}"),
+            'database_directory':
+                path.join(telegram_directory.path, "${name_client}"),
+            'files_directory':
+                path.join(telegram_directory.path, "${name_client}"),
           },
         );
       }
@@ -285,7 +308,8 @@ class TelegramUserbotTdlibTemplate {
     required Map msg,
     required UpdateTd update,
   }) async {
-    int bot_user_id = parserBotUserIdFromToken(update.client_option["token_bot"]);
+    int bot_user_id =
+        parserBotUserIdFromToken(update.client_option["token_bot"]);
     int current_admin_user_id = 0;
     int current_from_client_client_id = 0;
     String current_from_client_type = "core";
@@ -300,7 +324,8 @@ class TelegramUserbotTdlibTemplate {
       current_from_client_type = update.client_option["from_client_type"];
     }
     if (update.client_option["from_client_client_id"] is int) {
-      current_from_client_client_id = update.client_option["from_client_client_id"];
+      current_from_client_client_id =
+          update.client_option["from_client_client_id"];
     }
     if (update.client_option["admin_user_id"] is int) {
       current_admin_user_id = update.client_option["admin_user_id"];
@@ -321,7 +346,9 @@ class TelegramUserbotTdlibTemplate {
     };
     int from_id = msg["from"]["id"];
     int chat_id = msg["chat"]["id"];
-    String chat_type = msg["chat"]["type"].toString().replaceAll(RegExp(r"super", caseSensitive: false), "");
+    String chat_type = msg["chat"]["type"]
+        .toString()
+        .replaceAll(RegExp(r"super", caseSensitive: false), "");
     String chat_type_private = "private";
     if (chat_type == chat_type_private) {
       msg_bot.forEach((key, value) {
@@ -333,12 +360,22 @@ class TelegramUserbotTdlibTemplate {
       // });
     }
     int msg_auto_chat_id = msg_auto_chat["id"];
-    var stringChatId = msg["chat"]["id"].toString().replaceAll(RegExp(r"(-100|-)"), "");
-    var subMenu = text.toString().replaceAll(RegExp(r".*:|=.*", caseSensitive: false), "");
-    var subSubMenu = text.toString().replaceAll(RegExp(r".*=", caseSensitive: false), "");
-    String subData = cb["data"].toString().replaceAll(RegExp(r"(.*:|=.*)", caseSensitive: false), "");
-    String subDataId = cb["data"].toString().replaceAll(RegExp(r"(.*=|\-.*)", caseSensitive: false), "");
-    String subSubData = cb["data"].toString().replaceAll(RegExp(r"(.*\-)", caseSensitive: false), "");
+    var stringChatId =
+        msg["chat"]["id"].toString().replaceAll(RegExp(r"(-100|-)"), "");
+    var subMenu = text
+        .toString()
+        .replaceAll(RegExp(r".*:|=.*", caseSensitive: false), "");
+    var subSubMenu =
+        text.toString().replaceAll(RegExp(r".*=", caseSensitive: false), "");
+    String subData = cb["data"]
+        .toString()
+        .replaceAll(RegExp(r"(.*:|=.*)", caseSensitive: false), "");
+    String subDataId = cb["data"]
+        .toString()
+        .replaceAll(RegExp(r"(.*=|\-.*)", caseSensitive: false), "");
+    String subSubData = cb["data"]
+        .toString()
+        .replaceAll(RegExp(r"(.*\-)", caseSensitive: false), "");
     int msg_id = (cbm["message_id"] is int) ? cbm["message_id"] : 0;
 
     Map<String, dynamic> option = {
@@ -431,7 +468,8 @@ class TelegramUserbotTdlibTemplate {
     if (msg["chat"]["type"] is String == false) {
       msg["chat"]["type"] = "";
     }
-    String chat_type = (msg["chat"]["type"] as String).replaceAll(RegExp(r"super", caseSensitive: false), "");
+    String chat_type = (msg["chat"]["type"] as String)
+        .replaceAll(RegExp(r"super", caseSensitive: false), "");
     if (chat_type.isEmpty) {
       return null;
     }

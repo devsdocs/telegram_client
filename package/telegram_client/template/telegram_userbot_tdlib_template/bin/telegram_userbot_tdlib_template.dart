@@ -31,7 +31,8 @@ String ask({
 
 void main(List<String> arguments) async {
   Directory directory_current = Directory.current;
-  Directory telegram_directory = Directory(path.join(directory_current.path, "tg_database"));
+  Directory telegram_directory =
+      Directory(path.join(directory_current.path, "tg_database"));
 
   List<String> name_clients = ["azka"];
 
@@ -66,17 +67,21 @@ void main(List<String> arguments) async {
         TdlibIsolateReceiveData tdlibIsolateReceiveData = update;
         try {
           if (tdlibIsolateReceiveData.updateData["@extra"] is String) {
-            extraData[tdlibIsolateReceiveData.updateData["@extra"]] = tdlibIsolateReceiveData.updateData;
+            extraData[tdlibIsolateReceiveData.updateData["@extra"]] =
+                tdlibIsolateReceiveData.updateData;
           } else {
-            libTdJson.event_emitter.emit(libTdJson.event_update, null, tdlibIsolateReceiveData);
+            libTdJson.event_emitter
+                .emit(libTdJson.event_update, null, tdlibIsolateReceiveData);
           }
         } catch (e) {
-          libTdJson.event_emitter.emit(libTdJson.event_update, null, tdlibIsolateReceiveData);
+          libTdJson.event_emitter
+              .emit(libTdJson.event_update, null, tdlibIsolateReceiveData);
         }
       } else if (update is TdlibIsolateReceiveDataError) {
         TdlibIsolateReceiveDataError tdlibIsolateReceiveDataError = update;
         try {
-          TdlibClient? tdlibClient = libTdJson.clients.getClientById(tdlibIsolateReceiveDataError.clientId);
+          TdlibClient? tdlibClient = libTdJson.clients
+              .getClientById(tdlibIsolateReceiveDataError.clientId);
           if (tdlibClient != null) {
             tdlibClient.close();
           }
@@ -85,7 +90,8 @@ void main(List<String> arguments) async {
     },
   );
 
-  TelegramUserbotTdlibTemplate telegram_userbot_tdlib_template = TelegramUserbotTdlibTemplate(
+  TelegramUserbotTdlibTemplate telegram_userbot_tdlib_template =
+      TelegramUserbotTdlibTemplate(
     tg: tg,
     telegram_directory: telegram_directory,
     owner_chat_id: owner_chat_id,
@@ -93,11 +99,13 @@ void main(List<String> arguments) async {
   );
 
   await telegram_userbot_tdlib_template.userbot(
-    onAuthState: (int client_id, String name_client, AuthorizationStateType authorizationStateType) async {
+    onAuthState: (int client_id, String name_client,
+        AuthorizationStateType authorizationStateType) async {
       ///
       if (authorizationStateType == AuthorizationStateType.phone_number) {
         String phone_number = ask(question: "Phone Number: ");
-        phone_number = phone_number.replaceAll(RegExp(r"(\+|([ ]+))", caseSensitive: false), "");
+        phone_number = phone_number.replaceAll(
+            RegExp(r"(\+|([ ]+))", caseSensitive: false), "");
         await tg.request(
           "setAuthenticationPhoneNumber",
           parameters: {

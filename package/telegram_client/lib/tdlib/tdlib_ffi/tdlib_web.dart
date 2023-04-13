@@ -23,7 +23,7 @@ SOFTWARE.
 **/
 
 import 'dart:async';
-// import 'dart:ffi'; 
+// import 'dart:ffi';
 
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:telegram_client/isolate/isolate.dart';
@@ -79,7 +79,8 @@ class LibTdJson {
   bool is_auto_get_chat = false;
   Duration invoke_time_out = Duration(minutes: 10);
   late double timeOutUpdate;
-  FutureOr<void> Function(dynamic update, LibTdJson libTdJson)? on_receive_update;
+  FutureOr<void> Function(dynamic update, LibTdJson libTdJson)?
+      on_receive_update;
   FutureOr<Map> Function(dynamic updat, int client_id)? on_get_invoke_data;
   LibTdJson({
     String? pathTdl,
@@ -129,7 +130,8 @@ class LibTdJson {
       } else if (update is TdlibIsolateReceiveDataError) {
         TdlibIsolateReceiveDataError tdlibIsolateReceiveDataError = update;
         try {
-          TdlibClient? tdlibClient = clients.getClientById(tdlibIsolateReceiveDataError.clientId);
+          TdlibClient? tdlibClient =
+              clients.getClientById(tdlibIsolateReceiveDataError.clientId);
           if (tdlibClient != null) {
             tdlibClient.close();
           }
@@ -166,27 +168,21 @@ class LibTdJson {
 
   /// client_send
   void client_send(int clientId, [Map? parameters]) {
-    
     return;
   }
 
   /// client_execute
   Map<String, dynamic> client_execute(int clientId, [Map? parameters]) {
-    
-    return {
-
-    };
+    return {};
   }
 
   /// client_destroy
   void client_destroy(int clientId) {
-    
     return;
   }
 
   /// fetch update
   Map<String, dynamic>? client_receive(int clientId, [double timeout = 1.0]) {
-    
     return null;
   }
 
@@ -200,16 +196,7 @@ class LibTdJson {
     Map client_new_option = client_option.clone();
     if (clientOption != null) {
       client_new_option.addAll(clientOption);
-    }
-    TdlibIsolateData tdlibIsolateData = TdlibIsolateData(
-      sendPort: receivePort.sendPort,
-      clientOption: client_new_option,
-      clientId: clientId,
-      pathTdlib: path_tdlib,
-      isAndroid: is_android,
-      delayUpdate: delay_update,
-      timeOutUpdate: timeOutUpdate,
-    ); 
+    } 
   }
 
   /// add this for multithread new client on flutter apps
@@ -296,11 +283,14 @@ class LibTdJson {
     return false;
   }
 
-  Listener on(String type_update, FutureOr<dynamic> Function(UpdateTd update) callback, {void Function(Object data)? onError}) {
+  Listener on(
+      String type_update, FutureOr<dynamic> Function(UpdateTd update) callback,
+      {void Function(Object data)? onError}) {
     return event_emitter.on(type_update, null, (Event ev, context) async {
       try {
         if (ev.eventData is TdlibIsolateReceiveData) {
-          TdlibIsolateReceiveData tdlibIsolateReceiveData = (ev.eventData as TdlibIsolateReceiveData);
+          TdlibIsolateReceiveData tdlibIsolateReceiveData =
+              (ev.eventData as TdlibIsolateReceiveData);
           await callback(UpdateTd(
             update: tdlibIsolateReceiveData.updateData,
             client_id: tdlibIsolateReceiveData.clientId,
@@ -347,7 +337,9 @@ class LibTdJson {
       parameters["@extra"] = random;
     }
 
-    if (iSAutoGetChat && RegExp(r"^(sendMessage|getChatMember)$", caseSensitive: false).hashData(method)) {
+    if (iSAutoGetChat &&
+        RegExp(r"^(sendMessage|getChatMember)$", caseSensitive: false)
+            .hashData(method)) {
       if (parameters["chat_id"] is int) {
         client_send(
           clientId,

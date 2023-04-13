@@ -1,3 +1,7 @@
+## 0.4.7
+
+- Add New Style Code agar bisa di extends ke project besar seperti layanan services (social media panel, telegram gateway, telegram otp dll)
+
 ## 0.4.6
 
 - Test fix support cli macos
