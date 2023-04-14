@@ -147,7 +147,7 @@
 #   #           build/libtdjson.*.*
             
 
-name: tdlib-build-cross
+name: Build Tdlib Cross Platform
 
 on: [workflow_dispatch]
 
