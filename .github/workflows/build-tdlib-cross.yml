@@ -370,21 +370,8 @@ jobs:
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../tdlib ..
-          cmake --build . --target prepare_cross_compiling
-          cd ..
-          php SplitSource.php
-          cd build
-          cmake --build . --target install
-          cd ..
-          php SplitSource.php --undo
-
-#      - name: fake build
-#        run: |
-#          mkdir -p tdlib/lib
-#          echo test > tdlib/lib/libtdjson.so.1.8.4
-#          echo test > tdlib/lib/libtdjson.so
-#          rm tdlib/lib/libtdjson.so
-#          mv tdlib/lib/libtdjson.so.1.8.4 tdlib/lib/libtdjson.so
+          cmake --build .
+ 
 
       - name: zip
         run: |
