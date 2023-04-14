@@ -1,4 +1,4 @@
-name: Build Tdlib Cross Platform
+name: Build Telegram Bot Api Cross Platform
 on: [workflow_dispatch]
 jobs:
   build:
