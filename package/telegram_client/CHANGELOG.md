@@ -1,3 +1,13 @@
+## 0.4.10
+
+- Memperbaiki compile on flutter web
+- Mengganti argument token_bot TelegramBotApi ke tokenBot `TelegramBotApi(tokenBot: "")`
+- Update Template Library
+
+## 0.4.9
+
+- Add Parameters onGenerateExtraInvoke
+
 ## 0.4.8
 
 - Update Readme And Update Template

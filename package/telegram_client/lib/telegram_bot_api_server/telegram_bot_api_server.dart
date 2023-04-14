@@ -1,16 +1,15 @@
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps
 
 import 'package:universal_io/io.dart';
-import "ffi/telegram_bot_api_server.dart";
 
 /// telegram bot api server
-class TelegramBotApiServer extends LibTelegramBotApi {
+class TelegramBotApiServer {
   /// if you want bot server local use this
   TelegramBotApiServer();
 
   /// make parameters easy
   List<String> optionsParameters({
-    String? local,
+    bool? local,
     required String api_id,
     required String api_hash,
     String? http_port,
@@ -54,7 +53,9 @@ class TelegramBotApiServer extends LibTelegramBotApi {
     List<String> arguments = ["test"];
     data.forEach((key, value) {
       if (key == "--local") {
-        arguments.add("${key}");
+        if (value == true) {
+          arguments.add("${key}");
+        }
       } else if (value != null) {
         arguments.add("${key}=${value}");
       }

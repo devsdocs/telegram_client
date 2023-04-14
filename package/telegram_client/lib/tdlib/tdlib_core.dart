@@ -145,6 +145,7 @@ class Tdlib extends LibTdJson {
     super.isAutoGetChat = false,
     super.on_get_invoke_data,
     super.on_receive_update,
+    super.on_generate_extra_invoke,
   }) {
     if (clientId != null) {
       client_option["start"] = false;

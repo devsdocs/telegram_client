@@ -23,7 +23,6 @@ SOFTWARE.
 **/
 
 import 'dart:async';
-// import 'dart:ffi';
 
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:telegram_client/isolate/isolate.dart';
@@ -35,10 +34,13 @@ import 'package:universal_io/io.dart';
 /// Cheatset
 ///
 /// ```dart
-/// Tdlib tg = Tdlib("libtdjson.so", {
+/// Tdlib tg = Tdlib(
+///  pathTdl: "libtdjson.so",
+///  clientOption: {
 ///   "api_id": 121315,
 ///   "api_hash": "saskaspasad"
-/// });
+///  },
+/// );
 /// tg.on("update", (UpdateTd update) async {
 ///   print(update.raw);
 /// });
@@ -65,7 +67,7 @@ class LibTdJson {
     "database_key": "",
     "start": true,
   };
-  late final String path_tdlib;
+  late String path_tdlib;
   bool is_cli;
   bool is_android = Platform.isAndroid;
   List<TdlibClient> clients = [];
@@ -80,7 +82,10 @@ class LibTdJson {
   late double timeOutUpdate;
   FutureOr<void> Function(dynamic update, LibTdJson libTdJson)?
       on_receive_update;
-  FutureOr<Map> Function(dynamic updat, int client_id)? on_get_invoke_data;
+  FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
+      on_generate_extra_invoke;
+  FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)?
+      on_get_invoke_data;
   LibTdJson({
     String? pathTdl,
     Map? clientOption,
@@ -93,6 +98,7 @@ class LibTdJson {
     Duration? delayInvoke,
     Duration? invokeTimeOut,
     bool isAutoGetChat = false,
+    this.on_generate_extra_invoke,
     this.on_get_invoke_data,
     this.on_receive_update,
   }) {
@@ -153,7 +159,9 @@ class LibTdJson {
     return;
   }
 
-  dynamic get tdLib {}
+  get tdLib {
+    return;
+  }
 
   /// create client id for multi client
   int client_create() {
@@ -161,9 +169,7 @@ class LibTdJson {
     return 0;
   }
 
-  dynamic client_id_addres(int clientId) {
-    return 0;
-  }
+  client_id_addres(int clientId) {}
 
   /// client_send
   void client_send(int clientId, [Map? parameters]) {
@@ -282,6 +288,7 @@ class LibTdJson {
     return false;
   }
 
+  /// receive all update data
   Listener on(
       String type_update, FutureOr<dynamic> Function(UpdateTd update) callback,
       {void Function(Object data)? onError}) {
@@ -305,6 +312,17 @@ class LibTdJson {
     });
   }
 
+  /// call api latest [Tdlib-Methods](https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1_function.html)
+  /// example:
+  /// ```dart
+  /// tg.invoke(
+  ///  "getChat",
+  ///  parameters: {
+  ///    "chat_id": 0,
+  ///  },
+  ///  clientId: tg.client_id,
+  /// );
+  /// ```
   Future<Map> invoke(
     String method, {
     Map<String, dynamic>? parameters,
@@ -314,9 +332,14 @@ class LibTdJson {
     Duration? invokeTimeOut,
     String? extra,
     bool? iSAutoGetChat,
-    FutureOr<Map> Function(String extra, int client_id)? onGetInvokeData,
+    FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
+        onGenerateExtraInvoke,
+    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)?
+        onGetInvokeData,
     bool isThrowOnError = true,
   }) async {
+    onGetInvokeData ??= on_get_invoke_data;
+    onGenerateExtraInvoke ??= on_generate_extra_invoke;
     iSAutoGetChat ??= is_auto_get_chat;
     clientId ??= client_id;
     invokeTimeOut ??= invoke_time_out;
@@ -325,15 +348,32 @@ class LibTdJson {
       clientId = client_id;
     }
 
-    String random = generateUuid(15);
-    if (parameters is Map) {
-      parameters["@extra"] = random;
+    String extra_id = "";
+
+    bool is_set_extra_from_function = false;
+    if (parameters["@extra"] is String == false) {
+      if (extra != null) {
+        extra_id = extra;
+      } else if (onGenerateExtraInvoke != null) {
+        extra_id = (await onGenerateExtraInvoke(clientId, this));
+        is_set_extra_from_function = true;
+      } else {
+        extra_id = generateUuid(15);
+      }
+      parameters["@extra"] = extra_id;
     } else {
-      parameters["@extra"] = random;
+      extra_id = parameters["@extra"];
     }
-    if (extra != null) {
-      random = extra;
-      parameters["@extra"] = random;
+
+    if (extra_id.isEmpty) {
+      if (is_set_extra_from_function == false) {
+        if (onGenerateExtraInvoke != null) {
+          extra_id = (await onGenerateExtraInvoke(clientId, this));
+        }
+      }
+    }
+    if (extra_id.isEmpty) {
+      parameters["@extra"] = generateUuid(15);
     }
 
     if (iSAutoGetChat &&
@@ -383,13 +423,13 @@ class LibTdJson {
         clientId,
         requestMethod,
       );
-      return await onGetInvokeData(random, clientId);
+      return await onGetInvokeData(extra_id, clientId, this);
     }
     Listener listener = on(event_invoke, (UpdateTd update) async {
       try {
         if (update.client_id == clientId) {
           Map updateOrigin = update.raw;
-          if (updateOrigin["@extra"] == random) {
+          if (updateOrigin["@extra"] == extra_id) {
             updateOrigin.remove("@extra");
             result = updateOrigin;
           }
@@ -438,10 +478,12 @@ class LibTdJson {
   /// example:
   /// ```dart
   /// tg.invokeSync(
-  ///   "sendMessage",
-  ///   parameters: {
-  ///    "chat_id": 12345,
-  ///    "text": "send saskoasok"
+  ///  "parseTextEntities",
+  ///  parameters: {
+  ///    "parse_mode": {
+  ///      "@type": "textParseModeHTML",
+  ///     },
+  ///    "text": text
   ///   },
   ///   clientId: tg.client_id,
   /// );
@@ -464,11 +506,13 @@ class LibTdJson {
     } else {
       parameters["@extra"] = random;
     }
+
     var requestMethod = {
       "@type": method,
       "client_id": clientId,
       ...parameters,
     };
+
     Map result = client_execute(clientId, requestMethod);
     if (result["@type"] == "error") {
       if (!isThrowOnError) {

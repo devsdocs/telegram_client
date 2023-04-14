@@ -54,7 +54,7 @@ void main(List<String> arguments) async {
       arguments: telegramBotApiServer.optionsParameters(
         api_id: "${api_id}",
         api_hash: api_hash,
-        local: "yes",
+        local: false,
         http_port: "${bot_api_port}",
         dir: tg_bot_db_dir.path,
       ),
@@ -70,8 +70,10 @@ void main(List<String> arguments) async {
   }
 
   EventEmitter eventEmitter = EventEmitter();
-  TelegramBotApi tg =
-      TelegramBotApi(token_bot, clientOption: telegram_bot_api_option);
+  TelegramBotApi tg = TelegramBotApi(
+    tokenBot: token_bot,
+    clientOption: telegram_bot_api_option,
+  );
   Map get_me = await tg.request("getMe");
 
   print(jsonToMessage(get_me["result"], jsonFullMedia: {}));

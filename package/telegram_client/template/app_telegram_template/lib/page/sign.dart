@@ -406,31 +406,17 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
               Radius.circular(10),
             ),
             onPressed: () async {
-              ValidationData validationDataPassword = validation(
-                  data: keyEditingController.text,
-                  validationDataType: ValidationDataType.password);
-
               ValidationData validationData = validation(
-                  data: textEditingController.text,
-                  validationDataType: ValidationDataType.username);
+                data: textEditingController.text,
+                validationDataType: ValidationDataType.phone_number,
+              );
               if (validationData.message != null) {
                 //
                 await CoolAlert.show(
                   context: context,
                   type: CoolAlertType.info,
-                  title: "Username",
+                  title: "Phone Number",
                   text: validationData.message,
-                );
-                return;
-              }
-
-              if (validationDataPassword.message != null) {
-                //
-                await CoolAlert.show(
-                  context: context,
-                  type: CoolAlertType.info,
-                  title: "Password",
-                  text: validationDataPassword.message,
                 );
                 return;
               }
@@ -696,6 +682,7 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
         hintText: "628515678",
         labelText: "Phone Number",
         controller: textEditingController,
+        prefixIconData: Icons.phone,
         readOnly: readOnly,
         validator: (String? data) {
           ValidationData validationData = validation(
@@ -892,6 +879,7 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
   Widget textFormField({
     String? hintText,
     String? labelText,
+    IconData prefixIconData = Icons.people,
     Color color = Colors.white,
     TextEditingController? controller,
     String? Function(String? data)? validator,
@@ -919,8 +907,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
           color: Colors.grey,
           fontSize: 14.0,
         ),
-        prefixIcon: const Icon(
-          Icons.people,
+        prefixIcon: Icon(
+          prefixIconData,
           color: Colors.black,
           size: 18,
         ),

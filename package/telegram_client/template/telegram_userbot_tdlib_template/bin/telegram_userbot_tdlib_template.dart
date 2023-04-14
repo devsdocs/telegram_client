@@ -37,9 +37,13 @@ void main(List<String> arguments) async {
   List<String> name_clients = ["azka"];
 
   /// telegram database
-  int api_id = 0; // telegram api id https://my.telegram.org/
-  String api_hash = ""; // telegram api hash https://my.telegram.org/
-  int owner_chat_id = 0; // owner telegram chat id
+  int api_id = int.tryParse(Platform.environment["api_id"] ?? "0") ??
+      0; // telegram api id https://my.telegram.org/
+  String api_hash = Platform.environment["api_hash"] ??
+      ""; // telegram api hash https://my.telegram.org/
+  int owner_chat_id =
+      int.tryParse(Platform.environment["owner_chat_id"] ?? "0") ??
+          0; // owner telegram chat id
   Tdlib tg = Tdlib(
     pathTdl: "libtdjson.${getFormatLibrary}",
     clientOption: {

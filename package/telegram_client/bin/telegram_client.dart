@@ -28,7 +28,8 @@ Future<Directory?> getPackageDirectory({
 
 void main(List<String> args_raw) async {
   Directory? base_directory_lib = (await getPackageDirectory(
-      package_name: "package:telegram_client/telegram_client.dart"));
+    package_name: "package:telegram_client/telegram_client.dart",
+  ));
 
   if (base_directory_lib == null) {
     print("Maaf kami tidak bisa menemukan directory library");

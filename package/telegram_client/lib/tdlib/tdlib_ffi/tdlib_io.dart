@@ -87,7 +87,10 @@ class LibTdJson {
   late double timeOutUpdate;
   FutureOr<void> Function(dynamic update, LibTdJson libTdJson)?
       on_receive_update;
-  FutureOr<Map> Function(String extra, int client_id)? on_get_invoke_data;
+  FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
+      on_generate_extra_invoke;
+  FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)?
+      on_get_invoke_data;
   LibTdJson({
     String? pathTdl,
     Map? clientOption,
@@ -100,6 +103,7 @@ class LibTdJson {
     Duration? delayInvoke,
     Duration? invokeTimeOut,
     bool isAutoGetChat = false,
+    this.on_generate_extra_invoke,
     this.on_get_invoke_data,
     this.on_receive_update,
   }) {
@@ -450,10 +454,14 @@ class LibTdJson {
     Duration? invokeTimeOut,
     String? extra,
     bool? iSAutoGetChat,
-    FutureOr<Map> Function(String extra, int client_id)? onGetInvokeData,
+    FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
+        onGenerateExtraInvoke,
+    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)?
+        onGetInvokeData,
     bool isThrowOnError = true,
   }) async {
     onGetInvokeData ??= on_get_invoke_data;
+    onGenerateExtraInvoke ??= on_generate_extra_invoke;
     iSAutoGetChat ??= is_auto_get_chat;
     clientId ??= client_id;
     invokeTimeOut ??= invoke_time_out;
@@ -462,15 +470,32 @@ class LibTdJson {
       clientId = client_id;
     }
 
-    String random = generateUuid(15);
-    if (parameters is Map) {
-      parameters["@extra"] = random;
+    String extra_id = "";
+
+    bool is_set_extra_from_function = false;
+    if (parameters["@extra"] is String == false) {
+      if (extra != null) {
+        extra_id = extra;
+      } else if (onGenerateExtraInvoke != null) {
+        extra_id = (await onGenerateExtraInvoke(clientId, this));
+        is_set_extra_from_function = true;
+      } else {
+        extra_id = generateUuid(15);
+      }
+      parameters["@extra"] = extra_id;
     } else {
-      parameters["@extra"] = random;
+      extra_id = parameters["@extra"];
     }
-    if (extra != null) {
-      random = extra;
-      parameters["@extra"] = random;
+
+    if (extra_id.isEmpty) {
+      if (is_set_extra_from_function == false) {
+        if (onGenerateExtraInvoke != null) {
+          extra_id = (await onGenerateExtraInvoke(clientId, this));
+        }
+      }
+    }
+    if (extra_id.isEmpty) {
+      parameters["@extra"] = generateUuid(15);
     }
 
     if (iSAutoGetChat &&
@@ -520,13 +545,13 @@ class LibTdJson {
         clientId,
         requestMethod,
       );
-      return await onGetInvokeData(random, clientId);
+      return await onGetInvokeData(extra_id, clientId, this);
     }
     Listener listener = on(event_invoke, (UpdateTd update) async {
       try {
         if (update.client_id == clientId) {
           Map updateOrigin = update.raw;
-          if (updateOrigin["@extra"] == random) {
+          if (updateOrigin["@extra"] == extra_id) {
             updateOrigin.remove("@extra");
             result = updateOrigin;
           }
@@ -603,6 +628,7 @@ class LibTdJson {
     } else {
       parameters["@extra"] = random;
     }
+
     var requestMethod = {
       "@type": method,
       "client_id": clientId,

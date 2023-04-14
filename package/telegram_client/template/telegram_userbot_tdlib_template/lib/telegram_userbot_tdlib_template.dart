@@ -71,7 +71,6 @@ class TelegramUserbotTdlibTemplate {
     });
     //// handler update
     tg.on(tg.event_update, (UpdateTd update) async {
-      print(update.raw);
       try {
         String name_client = update.client_option["name_client"];
         int bot_user_id =
