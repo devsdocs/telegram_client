@@ -495,7 +495,8 @@ class LibTdJson {
       }
     }
     if (extra_id.isEmpty) {
-      parameters["@extra"] = generateUuid(15);
+      extra_id= generateUuid(15);
+      parameters["@extra"] = extra_id;
     }
 
     if (iSAutoGetChat &&
