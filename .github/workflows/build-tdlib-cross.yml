@@ -50,6 +50,7 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ]; then 
             cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../tdlib ..
             cmake --build .
+
           fi
           if [ "$RUNNER_OS" == "macOS" ]; then
             cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/opt/homebrew/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../tdlib ..
@@ -74,7 +75,7 @@ jobs:
           prerelease: false
           title: "Release Tdlib ${{ matrix.output-name }}"
           files: |
-            build/libtdjson.*.*
+            tdlib/.*
   
   # build-tdlib-mobile:
   #   name: Build 
