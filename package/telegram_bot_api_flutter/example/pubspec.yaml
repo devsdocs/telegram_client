@@ -30,8 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  telegram_client: 
-   path: ../../telegram_client
+  telegram_client: ^0.4.10
   telegram_bot_api_flutter:
     # When depending on this package from a real application you should use:
     #   telegram_bot_api_flutter: ^x.y.z

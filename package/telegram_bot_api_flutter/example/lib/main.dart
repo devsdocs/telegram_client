@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:telegram_bot_api_flutter/telegram_bot_api_flutter.dart' as telegram_bot_api_flutter;
+import 'package:telegram_bot_api_flutter/telegram_bot_api_flutter.dart'
+    as telegram_bot_api_flutter;
 import 'package:telegram_client/telegram_client.dart';
 import "package:path/path.dart" as path;
 
@@ -14,17 +15,21 @@ void main() async {
 
   String current_path = Directory.current.path;
   Directory tg_bot_dir = Directory(path.join(current_path, "telegram_bot"));
-  Directory tg_bot_db_dir = Directory(path.join(tg_bot_dir.path, "db")); 
+  Directory tg_bot_db_dir = Directory(path.join(tg_bot_dir.path, "db"));
   if (!tg_bot_db_dir.existsSync()) {
     await tg_bot_db_dir.create(recursive: true);
   }
   List<String> paths = dart.resolvedExecutable.split(dart.pathSeparator);
   paths.removeLast();
-  Directory directory_app = Directory(path.joinAll([dart.pathSeparator, ...paths]));
+  Directory directory_app =
+      Directory(path.joinAll([dart.pathSeparator, ...paths]));
   int api_id = int.tryParse(Platform.environment["api_id"] ?? "94575") ?? 94575;
-  String api_hash = Platform.environment["api_hash"] ?? "a3406de8d171bb422bb6ddf3bbd800e2";
+  String api_hash =
+      Platform.environment["api_hash"] ?? "a3406de8d171bb422bb6ddf3bbd800e2";
   TelegramBotApiServer telegramBotApiServer = TelegramBotApiServer();
-  await Process.run("chmod", ["777", path.join(directory_app.path, "bin", "telegram-bot-api-cli")], runInShell: false);
+  await Process.run("chmod",
+      ["777", path.join(directory_app.path, "bin", "telegram-bot-api-cli")],
+      runInShell: false);
   Process shell = await telegramBotApiServer.run(
     executable: path.join(directory_app.path, "bin", "telegram-bot-api-cli"),
     workingDirectory: path.join(
@@ -34,7 +39,7 @@ void main() async {
     arguments: telegramBotApiServer.optionsParameters(
       api_id: "${api_id}",
       api_hash: api_hash,
-      local: "yes",
+      local: true,
       http_port: "9001",
       dir: tg_bot_db_dir.path,
       temp_dir: tg_bot_db_dir.path,
