@@ -1,9 +1,66 @@
+// ignore_for_file: unnecessary_brace_in_string_interps, non_constant_identifier_names
+
 import 'dart:convert';
 
 /// telegram util
 class TgUtils {
   /// telegram utils
   TgUtils();
+
+  /// getMessage real like bot api
+  num getMessageId(dynamic message_id, [bool is_reverse = false]) {
+    if (message_id is num) {
+      if (is_reverse) {
+        return (message_id ~/ 1048576);
+      } else {
+        return (message_id * 1048576).toInt();
+      }
+    }
+    return 0;
+  }
+
+  num messageTdlibToApi(dynamic message_id) {
+    if (message_id is num) {
+      return (message_id ~/ 1048576).toInt();
+    }
+    return 0;
+  }
+
+  num messageApiToTdlib(dynamic message_id) {
+    if (message_id is num) {
+      return (message_id * 1048576).toInt();
+    }
+    return 0;
+  }
+
+  List<int> messagesTdlibToApi(dynamic message_ids) {
+    if (message_ids is List<int>) {
+      return message_ids
+          .map((message_id) => messageTdlibToApi(message_id).toInt())
+          .toList()
+          .cast<int>();
+    }
+    return [];
+  }
+
+  List<int> messagesApiToTdlib(message_ids) {
+    if (message_ids is List<int>) {
+      return message_ids
+          .map((message_id) => messageApiToTdlib(message_id).toInt())
+          .toList()
+          .cast<int>();
+    }
+    return [];
+  }
+
+  int toSuperGroupId(dynamic chat_id) {
+    if (chat_id is int) {
+      if (chat_id.isNegative) {
+        return int.parse("${chat_id}".replaceAll(RegExp(r"-100"), ""));
+      }
+    }
+    return 0;
+  }
 
   /// ccreate offset for tl
   static List<String> splitByLength(String text, int length,

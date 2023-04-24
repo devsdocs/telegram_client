@@ -1,3 +1,11 @@
+## 0.4.12
+
+- add reply markup in jsonMessage tdlib
+
+## 0.4.11
+
+- add message_id tdlib to api and message_id api to tdlib
+
 ## 0.4.10
 
 - Memperbaiki compile on flutter web

@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, empty_catches, unnecessary_type_check, void_checks, unnecessary_brace_in_string_interps
+// ignore_for_file: non_constant_identifier_names, empty_catches, unnecessary_type_check, void_checks, unnecessary_brace_in_string_interps, unused_catch_stack
 
 // ignore: slash_for_doc_comments
 /**
@@ -163,20 +163,58 @@ class Tdlib extends LibTdJson {
   }
 
   /// getMessage real like bot api
-  num getMessageId(num message_id, [bool is_reverse = false]) {
-    if (is_reverse) {
-      return (message_id ~/ 1048576);
-    } else {
+  num getMessageId(dynamic message_id, [bool is_reverse = false]) {
+    if (message_id is num) {
+      if (is_reverse) {
+        return (message_id ~/ 1048576);
+      } else {
+        return (message_id * 1048576).toInt();
+      }
+    }
+    return 0;
+  }
+
+  num messageTdlibToApi(dynamic message_id) {
+    if (message_id is num) {
+      return (message_id ~/ 1048576).toInt();
+    }
+    return 0;
+  }
+
+  num messageApiToTdlib(dynamic message_id) {
+    if (message_id is num) {
       return (message_id * 1048576).toInt();
     }
+    return 0;
   }
 
-  num messageTdlibToApi(num message_id) {
-    return (message_id ~/ 1048576);
+  List<int> messagesTdlibToApi(dynamic message_ids) {
+    if (message_ids is List<int>) {
+      return message_ids
+          .map((message_id) => messageTdlibToApi(message_id).toInt())
+          .toList()
+          .cast<int>();
+    }
+    return [];
   }
 
-  num messageApiToTdlib(num message_id) {
-    return (message_id * 1048576);
+  List<int> messagesApiToTdlib(message_ids) {
+    if (message_ids is List<int>) {
+      return message_ids
+          .map((message_id) => messageApiToTdlib(message_id).toInt())
+          .toList()
+          .cast<int>();
+    }
+    return [];
+  }
+
+  int toSuperGroupId(dynamic chat_id) {
+    if (chat_id is int) {
+      if (chat_id.isNegative) {
+        return int.parse("${chat_id}".replaceAll(RegExp(r"-100"), ""));
+      }
+    }
+    return 0;
   }
 
   /// set up authorizationStateWaitTdlibParameters new client without more code
@@ -2559,6 +2597,113 @@ class Tdlib extends LibTdJson {
             } catch (e) {}
           }
           json["entities"] = new_entities;
+        }
+
+        if (update["reply_markup"] is Map) {
+          Map update_reply_markup = update["reply_markup"];
+          json["reply_markup"] = {};
+          if (update_reply_markup["resize_keyboard"] is bool) {
+            json["reply_markup"]["resize_keyboard"] =
+                (update_reply_markup["resize_keyboard"] == true);
+          }
+          if (update_reply_markup["one_time"] is bool) {
+            json["reply_markup"]["one_time"] =
+                (update_reply_markup["one_time"] == true);
+          }
+          if (update_reply_markup["is_personal"] is bool) {
+            json["reply_markup"]["is_personal"] =
+                (update_reply_markup["is_personal"] == true);
+          }
+
+          if (update_reply_markup["input_field_placeholder"] is String) {
+            json["reply_markup"]["input_field_placeholder"] =
+                (update_reply_markup["input_field_placeholder"] is String)
+                    ? (update_reply_markup["input_field_placeholder"] as String)
+                    : "";
+          }
+          try {
+            if (update_reply_markup["@type"] == "replyMarkupShowKeyboard") {
+              List raw_keyboard = update_reply_markup["rows"];
+              List<List<Map>> keyboards_data = [];
+
+              for (var i = 0; i < raw_keyboard.length; i++) {
+                dynamic raw_keyboards = raw_keyboard[i];
+
+                if (raw_keyboards is List) {
+                  List<Map> new_keyboard = [];
+                  for (var ii = 0; ii < raw_keyboards.length; ii++) {
+                    dynamic raw_keyboard_data = raw_keyboards[ii];
+                    if (raw_keyboard_data is Map) {
+                      Map jsonDataKeyboard = {
+                        "text": raw_keyboard_data["text"],
+                      };
+                      if (raw_keyboard_data["type"] is Map) {
+                        // https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1_inline_keyboard_button_type.html
+                        if (raw_keyboard_data["@type"] ==
+                            "keyboardButtonTypeRequestPoll") {
+                          jsonDataKeyboard["is_request_poll"] = true;
+                        }
+                        if (raw_keyboard_data["@type"] ==
+                            "keyboardButtonTypeRequestLocation") {
+                          jsonDataKeyboard["is_request_location"] = true;
+                        }
+                        //
+                        if (raw_keyboard_data["@type"] ==
+                            "keyboardButtonTypeRequestPhoneNumber") {
+                          jsonDataKeyboard["is_request_phone_number"] = true;
+                        }
+                      }
+                      new_keyboard.add(jsonDataKeyboard);
+                    }
+                  }
+                  keyboards_data.add(new_keyboard);
+                }
+              }
+              json["reply_markup"]["keyboard"] = keyboards_data;
+            }
+            if (update_reply_markup["@type"] == "replyMarkupInlineKeyboard") {
+              List raw_keyboard = update_reply_markup["rows"];
+              List<List<Map>> keyboards_data = [];
+
+              for (var i = 0; i < raw_keyboard.length; i++) {
+                dynamic raw_keyboards = raw_keyboard[i];
+
+                if (raw_keyboards is List) {
+                  List<Map> new_keyboard = [];
+                  for (var ii = 0; ii < raw_keyboards.length; ii++) {
+                    dynamic raw_keyboard_data = raw_keyboards[ii];
+                    if (raw_keyboard_data is Map) {
+                      Map jsonDataKeyboard = {
+                        "text": raw_keyboard_data["text"],
+                      };
+                      if (raw_keyboard_data["type"] is Map) {
+                        // https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1_inline_keyboard_button_type.html
+                        if (raw_keyboard_data["@type"] ==
+                            "inlineKeyboardButtonTypeCallback") {
+                          if (raw_keyboard_data["type"]["data"] is String) {
+                            jsonDataKeyboard["callback_data"] = convert.utf8
+                                .decode(convert.base64
+                                    .decode(raw_keyboard_data["type"]["data"]));
+                          }
+                        }
+                        //
+                        if (raw_keyboard_data["@type"] ==
+                            "inlineKeyboardButtonTypeUrl") {
+                          if (raw_keyboard_data["type"]["url"] is String) {
+                            jsonDataKeyboard["url"] =
+                                raw_keyboard_data["type"]["url"];
+                          }
+                        }
+                      }
+                      new_keyboard.add(jsonDataKeyboard);
+                    }
+                  }
+                  keyboards_data.add(new_keyboard);
+                }
+              }
+              json["reply_markup"]["inline_keyboard"] = keyboards_data;
+            }
+          } catch (e, stack) {}
         }
 
         if (is_detail) {
