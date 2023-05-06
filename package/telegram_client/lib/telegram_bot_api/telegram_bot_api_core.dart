@@ -388,6 +388,10 @@ class TelegramBotApi {
     urlApi ??= client_option["api"];
     tokenBot ??= token_bot;
 
+    if (parameters["is_natural"] == true){
+      
+    }
+
     if (isAutoExtendMessage) {
       if (parameters["text"] is String) {
         String text = parameters["text"];
