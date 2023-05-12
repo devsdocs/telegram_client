@@ -8,28 +8,28 @@ version: 0.0.0
 publish_to: none
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: '>=2.19.2 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  galaxeus_lib: ^0.0.63
-  url_launcher: ^6.1.10
+  cupertino_icons: ^1.0.5
+  galaxeus_lib: ^0.0.64
+  url_launcher: ^6.1.11
   universal_io: ^2.2.0
-  galaxeus_lib_flutter: ^0.0.7
+  galaxeus_lib_flutter: ^0.0.8
   cool_alert: ^2.0.1
-  telegram_client: ^0.4.11
-  isar: ^3.0.5
-  isar_flutter_libs: ^3.0.5
-  path_provider: ^2.0.14
+  telegram_client: ^0.4.13
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.0.15
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
   packagex: ^0.0.25
-  msix: ^3.9.1
-  isar_generator: ^3.0.5 
-  build_runner: ^2.3.3
+  msix: ^3.12.1
+  isar_generator: ^3.1.0+1 
+  build_runner: ^2.4.2
 
   
 

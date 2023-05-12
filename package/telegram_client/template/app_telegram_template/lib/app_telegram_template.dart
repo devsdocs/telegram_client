@@ -47,6 +47,7 @@ class _AppTelegramTemplateState extends State<AppTelegramTemplate> {
         [
           isar_scheme.TgClientDataSchema,
         ],
+        directory: app_tg_dir.path,
         maxSizeMiB: Isar.defaultMaxSizeMiB * 100,
       );
 
@@ -109,6 +110,7 @@ class _AppTelegramTemplateState extends State<AppTelegramTemplate> {
             await Future.delayed(Duration(milliseconds: 1));
             try {
               String new_extra_id = generateUuid(15);
+              return new_extra_id;
             } catch (e) {}
           }
         },

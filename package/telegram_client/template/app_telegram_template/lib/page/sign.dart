@@ -6,7 +6,7 @@ import "package:app_telegram_template/page/page.dart";
 import "package:cool_alert/cool_alert.dart";
 import 'package:flutter/material.dart';
 
-import "package:galaxeus_lib/galaxeus_lib.dart";
+// import "package:galaxeus_lib/galaxeus_lib.dart";
 import "package:galaxeus_lib_flutter/galaxeus_lib_flutter.dart";
 
 enum SignPageWaitType {

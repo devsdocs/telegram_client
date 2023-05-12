@@ -586,7 +586,8 @@ class PaymentTg {
           id: "id",
         );
 
-        return {"@type": "ok"};
+        return res.toJson();
+        // return {"@type": "ok"};
       }
     } catch (e) {
       if (e is XenditError) {
