@@ -390,6 +390,7 @@ class LibTdJson {
             "close",
             clientId: clientId,
             extra: extra,
+            isVoid: true,
           );
         } catch (e) {}
       }

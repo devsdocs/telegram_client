@@ -267,6 +267,11 @@ class Tdlib extends LibTdJson {
         }
       }
 
+      if (authStateType == "authorizationStateClosed") {
+        
+        await exitClientById(update.client_id);
+      }
+
       if (authStateType == "authorizationStateReady") {
         TdlibClient? tdlibClient = getClientById(update.client_id);
         if (tdlibClient == null || tdlibClient.client_user_id != 0) {
