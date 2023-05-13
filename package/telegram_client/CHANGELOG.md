@@ -1,3 +1,7 @@
+## 0.4.14
+
+- set default delay update zero for get maksimum speed 
+
 ## 0.4.13
 
 - update dart 3

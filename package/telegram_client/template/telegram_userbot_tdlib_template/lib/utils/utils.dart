@@ -1,6 +1,6 @@
-int parserBotUserIdFromToken(dynamic token_bot) {
+int parserBotUserIdFromToken(dynamic tokenBot) {
   try {
-    return int.parse(token_bot.split(":")[0]);
+    return int.parse(tokenBot.split(":")[0]);
   } catch (e) {
     return 0;
   }

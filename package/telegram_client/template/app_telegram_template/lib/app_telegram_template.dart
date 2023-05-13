@@ -107,7 +107,7 @@ class _AppTelegramTemplateState extends State<AppTelegramTemplate> {
         },
         on_generate_extra_invoke: (client_id, libTdJson) async {
           while (true) {
-            await Future.delayed(Duration(milliseconds: 1));
+            await Future.delayed(const Duration(milliseconds: 1));
             try {
               String new_extra_id = generateUuid(15);
               return new_extra_id;
@@ -117,7 +117,7 @@ class _AppTelegramTemplateState extends State<AppTelegramTemplate> {
         on_get_invoke_data: (extra, client_id, libTdJson) async {
           print("Get Data");
           while (true) {
-            await Future.delayed(Duration(milliseconds: 1));
+            await Future.delayed(const Duration(milliseconds: 1));
             // isar_db.collection().filter();
             // Map? data = extraData[extra];
             // if (data != null) {
@@ -209,7 +209,7 @@ class _AppTelegramTemplateState extends State<AppTelegramTemplate> {
       print(tdlib.client_id);
       await tdlib.initIsolate();
       is_complete = true;
-      Timer.periodic(Duration(microseconds: 1), (timer) async {
+      Timer.periodic(const Duration(microseconds: 1), (timer) async {
         if (is_complete) {
           timer.cancel();
           await Navigator.of(context).pushReplacement(

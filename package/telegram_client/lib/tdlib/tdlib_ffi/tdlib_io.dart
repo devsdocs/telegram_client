@@ -80,11 +80,11 @@ class LibTdJson {
   String event_invoke = "invoke";
   String event_update = "update";
   EventEmitter event_emitter = EventEmitter();
-  Duration delay_update = Duration(milliseconds: 1);
+  Duration? delay_update;
   Duration delay_invoke = Duration(milliseconds: 1);
   bool is_auto_get_chat = false;
   Duration invoke_time_out = Duration(minutes: 10);
-  late double timeOutUpdate;
+  double timeOutUpdate;
   FutureOr<void> Function(dynamic update, LibTdJson libTdJson)?
       on_receive_update;
   FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
@@ -293,7 +293,10 @@ class LibTdJson {
             clientOption: tdlibIsolateData.clientOption,
           );
           while (true) {
-            await Future.delayed(tdlibIsolateData.delayUpdate);
+            if (tdlibIsolateData.delayUpdate != null) {
+              await Future.delayed(
+                  tdlibIsolateData.delayUpdate ?? Duration.zero);
+            }
             Map? new_update = tg.client_receive(
                 tdlibIsolateData.clientId, tdlibIsolateData.timeOutUpdate);
             if (new_update != null) {

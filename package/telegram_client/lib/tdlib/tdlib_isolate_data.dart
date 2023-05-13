@@ -6,7 +6,7 @@ class TdlibIsolateData {
   int clientId;
   String pathTdlib;
   bool isAndroid;
-  Duration delayUpdate;
+  Duration? delayUpdate;
   double timeOutUpdate;
   TdlibIsolateData({
     required this.sendPort,
