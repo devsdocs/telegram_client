@@ -161,18 +161,25 @@ Future<Map?> callbackQuery(
   var stringChatId =
       msg["chat"]["id"].toString().replaceAll(RegExp(r"(-100|-)"), "");
   String data = cb["data"];
-  String subData = cb["data"]
-      .toString()
-      .replaceAll(RegExp(r"(.*:|=.*)", caseSensitive: false), "");
-  String subDataId = cb["data"]
-      .toString()
-      .replaceAll(RegExp(r"(.*=|\-.*)", caseSensitive: false), "");
-  String subSubData = cb["data"]
-      .toString()
-      .replaceAll(RegExp(r"(.*\-)", caseSensitive: false), "");
+  // String subData = cb["data"].toString().replaceAll(RegExp(r"(.*:|=.*)", caseSensitive: false), "");
+  // String subDataId = cb["data"].toString().replaceAll(RegExp(r"(.*=|\-.*)", caseSensitive: false), "");
+  // String subSubData = cb["data"].toString().replaceAll(RegExp(r"(.*\-)", caseSensitive: false), "");
 
-  List<String> callback_datas = data.split(" ");
-  CallBackData callBackData = CallBackData(callback_datas: callback_datas);
+  Args args =
+      Args(data.split(" ").where((element) => element.isNotEmpty).toList());
+
+  String command = args[0] ?? "";
+  int command_chat_id = int.tryParse(command) ?? 0;
+  int command_user_id = int.tryParse(args.after(command) ?? "0") ?? 0;
+  if (command_chat_id != 0) {
+    args.arguments.removeAt(0);
+    if (command_user_id != 0) {
+      args.arguments.removeAt(0);
+    }
+    command = args[0] ?? "";
+  }
+  String sub_command = args.after(command) ?? "";
+  String sub_sub_command = args.after(sub_command) ?? "";
 
   ChatData get_chat_data = await databaseTg.getChat(
     chat_type: chat_type,
@@ -288,9 +295,9 @@ Future<Map?> callbackQuery(
     option["method"] = "editMessageCaption";
   }
   try {
-    if (RegExp(r"^bot$", caseSensitive: false).hashData(callBackData.first)) {
+    if (RegExp(r"^bot$", caseSensitive: false).hashData(command)) {
       if (RegExp(r"^(main_menu)$", caseSensitive: false)
-          .hashData(callBackData[1])) {
+          .hashData(sub_command)) {
         option["text"] = "Bot menu\n\nSilahkan tap menunya kak";
         option["reply_markup"] = {
           "inline_keyboard": [
@@ -309,7 +316,7 @@ Future<Map?> callbackQuery(
         return await tg.request(option["method"], parameters: option);
       }
       if (RegExp(r"^(main_menu)$", caseSensitive: false)
-          .hashData(callBackData[1])) {
+          .hashData(sub_command)) {
         option["text"] = "Bot menu\n\nSilahkan tap menunya kak";
         option["reply_markup"] = {
           "inline_keyboard": [
@@ -327,8 +334,7 @@ Future<Map?> callbackQuery(
         };
         return await tg.request(option["method"], parameters: option);
       }
-      if (RegExp(r"^(sub_menu)$", caseSensitive: false)
-          .hashData(callBackData[1])) {
+      if (RegExp(r"^(sub_menu)$", caseSensitive: false).hashData(sub_command)) {
         option["text"] = "Sub menu\n\nSilahkan tap menunya kak";
         option["reply_markup"] = {
           "inline_keyboard": [

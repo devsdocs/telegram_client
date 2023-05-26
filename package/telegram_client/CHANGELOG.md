@@ -1,3 +1,11 @@
+## 0.4.17
+
+- update depend package
+
+## 0.4.16
+
+- fix score
+
 ## 0.4.15
 
 - update

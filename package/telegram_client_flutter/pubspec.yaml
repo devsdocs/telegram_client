@@ -1,6 +1,6 @@
 name: telegram_client_flutter
 description: A Telegram client flutter libary for make telegram with tdlib easy.
-version: 0.0.3
+version: 0.0.4
 homepage: https://telegram-client.vercel.app 
 false_secrets:
  - /linux/tdlib/libtdjson.so
@@ -8,18 +8,18 @@ false_secrets:
  - /windows/tdlib/
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=2.11.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
 flutter:
   plugin:
     platforms:

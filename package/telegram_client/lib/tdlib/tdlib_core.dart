@@ -268,7 +268,6 @@ class Tdlib extends LibTdJson {
       }
 
       if (authStateType == "authorizationStateClosed") {
-        
         await exitClientById(update.client_id);
       }
 
@@ -1479,11 +1478,13 @@ class Tdlib extends LibTdJson {
   }) async {
     clientId ??= client_id;
     try {
-      if (RegExp(r"^@.*$", caseSensitive: false).hashData(chat_id.toString())) {
+      if (chat_id is String &&
+          RegExp(r"^([a-z0-9_]+)$", caseSensitive: false).hashData(chat_id)) {
         var search_public_chat = await invoke(
           "searchPublicChat",
           parameters: {
-            "username": chat_id,
+            "username":
+                chat_id.replaceAll(RegExp(r"@", caseSensitive: false), ""),
           },
           clientId: clientId,
           extra: extra,
@@ -1510,9 +1511,11 @@ class Tdlib extends LibTdJson {
           var getSupergroup = await invoke(
             "getSupergroup",
             parameters: {
-              "supergroup_id": int.parse(chat_id
-                  .toString()
-                  .replaceAll(RegExp("^-100", caseSensitive: false), ""))
+              "supergroup_id": int.parse(
+                chat_id
+                    .toString()
+                    .replaceAll(RegExp("^-100", caseSensitive: false), ""),
+              ),
             },
             clientId: clientId,
             extra: extra,
