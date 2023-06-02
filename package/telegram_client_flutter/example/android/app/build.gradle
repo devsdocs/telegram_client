@@ -26,6 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace "com.example.telegram_client_flutter_example"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

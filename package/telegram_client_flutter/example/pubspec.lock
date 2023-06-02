@@ -123,14 +123,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
-  plugin_platform_interface:
-    dependency: transitive
-    description:
-      name: plugin_platform_interface
-      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.4"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -168,13 +160,37 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  telegram_client_android:
+    dependency: transitive
+    description:
+      name: telegram_client_android
+      sha256: "3d2b24c9ba2b77fcac6ee0da6d0e48a5821984061517762213ea2c103eaecf45"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.0"
   telegram_client_flutter:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.4"
+    version: "0.0.5"
+  telegram_client_linux:
+    dependency: transitive
+    description:
+      name: telegram_client_linux
+      sha256: db63c4915fd637de12c85bf295f32c1babc53ccf4895890a1b8777f282296731
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.0"
+  telegram_client_windows:
+    dependency: transitive
+    description:
+      name: telegram_client_windows
+      sha256: "505d93e61fa3f5b692b29b9afb64ac2ee968d526396b0a7548a09d9f154fb57c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.0"
   term_glyph:
     dependency: transitive
     description:
@@ -201,4 +217,4 @@ packages:
     version: "2.1.4"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=2.11.0"
+  flutter: ">=3.3.0"

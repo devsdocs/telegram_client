@@ -1,49 +1,70 @@
-// ignore_for_file: unused_local_variable, duplicate_ignore
-
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:async'; 
 
 void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: true,
-      title: "Azka Dev",
-      home: App(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
-class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  MyApp createState() => MyApp();
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyApp extends State<App> {
-  late String quote;
+class _MyAppState extends State<MyApp> {
+  late int sumResult;
+  late Future<int> sumAsyncResult;
+
   @override
   void initState() {
     super.initState();
-    setState(() {
-      // ignore: unused_local_variable
-      var quotes = ["hay kamu", "hay aku"];
-      quote = quotes[Random().nextInt(quotes.length)];
-    });
+    sumResult = 1 + 2;
+    sumAsyncResult = Future(() => 10);
   }
 
   @override
-  // ignore: duplicate_ignore, duplicate_ignore
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    // ignore: unused_local_variable
-    final getHeight = mediaQuery.size.height;
-    final getWidth = mediaQuery.size.width;
+    const textStyle = TextStyle(fontSize: 25);
+    const spacerSmall = SizedBox(height: 10);
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
-      title: "Home",
-      home: Center(
-        child: Text("quote: ${quote.toString()}"),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Native Packages'),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                const Text(
+                  'This calls a native function through FFI that is shipped as source in the package. '
+                  'The native code is built as part of the Flutter Runner build.',
+                  style: textStyle,
+                  textAlign: TextAlign.center,
+                ),
+                spacerSmall,
+                Text(
+                  'sum(1, 2) = $sumResult',
+                  style: textStyle,
+                  textAlign: TextAlign.center,
+                ),
+                spacerSmall,
+                FutureBuilder<int>(
+                  future: sumAsyncResult,
+                  builder: (BuildContext context, AsyncSnapshot<int> value) {
+                    final displayValue = (value.hasData) ? value.data : 'loading';
+                    return Text(
+                      'await sumAsync(3, 4) = $displayValue',
+                      style: textStyle,
+                      textAlign: TextAlign.center,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,7 +1,5 @@
 // ignore_for_file: unnecessary_brace_in_string_interps, non_constant_identifier_names
 
-import 'dart:convert';
-
 /// telegram util
 class TgUtils {
   /// telegram utils
@@ -35,20 +33,14 @@ class TgUtils {
 
   List<int> messagesTdlibToApi(dynamic message_ids) {
     if (message_ids is List<int>) {
-      return message_ids
-          .map((message_id) => messageTdlibToApi(message_id).toInt())
-          .toList()
-          .cast<int>();
+      return message_ids.map((message_id) => messageTdlibToApi(message_id).toInt()).toList().cast<int>();
     }
     return [];
   }
 
   List<int> messagesApiToTdlib(message_ids) {
     if (message_ids is List<int>) {
-      return message_ids
-          .map((message_id) => messageApiToTdlib(message_id).toInt())
-          .toList()
-          .cast<int>();
+      return message_ids.map((message_id) => messageApiToTdlib(message_id).toInt()).toList().cast<int>();
     }
     return [];
   }
@@ -63,14 +55,12 @@ class TgUtils {
   }
 
   /// ccreate offset for tl
-  static List<String> splitByLength(String text, int length,
-      {bool ignoreEmpty = false}) {
+  static List<String> splitByLength(String text, int length, {bool ignoreEmpty = false}) {
     List<String> pieces = [];
 
     for (int i = 0; i < text.length; i += length) {
       int offset = i + length;
-      String piece =
-          text.substring(i, offset >= text.length ? text.length : offset);
+      String piece = text.substring(i, offset >= text.length ? text.length : offset);
 
       if (ignoreEmpty) {
         piece = piece.replaceAll(RegExp(r'\s+'), '');
@@ -82,12 +72,12 @@ class TgUtils {
   }
 
   /// ccreate offset for tl
-  static List<int> createOffset({
+  static (List<int> offsets, int limit) createOffset({
     required int totalCount,
     required int limitCount,
   }) {
-    late int offset = 0;
-    late List<int> listOffset = [0];
+    int offset = 0;
+    List<int> listOffset = [0];
     for (var i = 0; i < (totalCount ~/ limitCount).toInt(); i++) {
       for (var ii = 0; ii <= limitCount; ii++) {
         if (ii == limitCount) {
@@ -96,7 +86,7 @@ class TgUtils {
       }
       listOffset.add(offset);
     }
-    return listOffset;
+    return (listOffset, limitCount);
   }
 
   static bool getBoolean(dynamic data) {
@@ -135,33 +125,5 @@ class TgUtils {
     } else {
       return false;
     }
-  }
-}
-
-class Buffer {
-  static String base64 = "base64";
-  static String utf8 = "utf8";
-  static Encode from(String data, [String type = "utf8"]) {
-    return Encode(data, type);
-  }
-}
-
-class Encode {
-  String text;
-  String type;
-  Encode(this.text, this.type);
-
-  String toStringEncode(String typeEncode) {
-    if (RegExp(r"^utf8$", caseSensitive: false).hasMatch(type)) {
-      if (RegExp(r"^base64$", caseSensitive: false).hasMatch(typeEncode)) {
-        return base64.encode(utf8.encode(text));
-      }
-    }
-    if (RegExp(r"^base64$", caseSensitive: false).hasMatch(type)) {
-      if (RegExp(r"^utf8$", caseSensitive: false).hasMatch(typeEncode)) {
-        return utf8.decode(base64.decode(text));
-      }
-    }
-    return text;
   }
 }

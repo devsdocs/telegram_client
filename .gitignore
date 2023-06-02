@@ -8,3 +8,8 @@ dart/telegram_client/build/
 node-js/telegram-client/node_modules/
 
 node-js/telegram-client/node_modules/*
+
+
+*.so
+
+*.dll
