@@ -102,8 +102,8 @@ class _AppTelegramTemplateState extends State<AppTelegramTemplate> {
 
       Tdlib tdlib = Tdlib(
         clientOption: {
-          'api_id': 25556854,
-          'api_hash': 'e6c8340cbeaee2d1fad5bd57fa33bbea',
+          'api_id': 94575,
+          'api_hash': 'a3406de8d171bb422bb6ddf3bbd800e2',
         },
         on_generate_extra_invoke: (client_id, libTdJson) async {
           while (true) {
