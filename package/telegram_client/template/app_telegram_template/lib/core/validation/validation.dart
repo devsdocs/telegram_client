@@ -7,6 +7,7 @@ enum ValidationDataType {
   code,
   token_bot,
   reason,
+  first_name,
 }
 
 class ValidationData {
@@ -37,7 +38,7 @@ ValidationData validation({
   }
   if (validationDataType == ValidationDataType.phone_number) {
     if (data != null) {
-      if (!RegExp(r"^([0-9]+)$", caseSensitive: false).hashData(data)) {
+      if (!RegExp(r"^((\+)?[0-9]+)$", caseSensitive: false).hashData(data)) {
         validationData.message = "Format Phone Number Salah";
       } else {
         validationData.is_valid = true;
@@ -50,8 +51,6 @@ ValidationData validation({
     if (data != null) {
       if (!RegExp(r"^([0-9]+)$", caseSensitive: false).hashData(data)) {
         validationData.message = "Format Code Salah";
-      } else if (data.length != 5) {
-        validationData.message = "Panjang code harus 5";
       } else {
         validationData.is_valid = true;
       }
@@ -59,6 +58,15 @@ ValidationData validation({
       validationData.message = "Code harus ada";
     }
   }
+  if (validationDataType == ValidationDataType.first_name) {
+    if (data != null) { 
+        validationData.is_valid = true;
+      
+    } else {
+      validationData.message = "First Name harus ada";
+    }
+  }
+
   if (validationDataType == ValidationDataType.username) {
     if (data != null) {
       if (!RegExp(r"^([a-z]+)$", caseSensitive: false).hashData(data)) {
@@ -67,8 +75,7 @@ ValidationData validation({
         validationData.message = "Minimal Username 5";
       } else if (data.length > 25) {
         validationData.message = "Maximal username 25";
-      } else if (RegExp(r"(kontol|memek|anjing|bangsat)", caseSensitive: false)
-          .hashData(data)) {
+      } else if (RegExp(r"(kontol|memek|anjing|bangsat)", caseSensitive: false).hashData(data)) {
         validationData.message = "Username tidak boleh mengandung kata kasar";
       } else {
         validationData.is_valid = true;
@@ -87,14 +94,11 @@ ValidationData validation({
         validationData.message = "Password harus ada huruf";
       } else if (!RegExp(r"([0-9]+)", caseSensitive: false).hashData(data)) {
         validationData.message = "Password harus ada angka";
-      } else if (!RegExp(r"([./,\\=\-+?><;:'\]\[|}{_)(*&^%$#@!~`]+)",
-              caseSensitive: false)
-          .hashData(data)) {
+      } else if (!RegExp(r"([./,\\=\-+?><;:'\]\[|}{_)(*&^%$#@!~`]+)", caseSensitive: false).hashData(data)) {
         validationData.message = "Password harus ada simbol";
       } else if (!RegExp(r"([ ]+)", caseSensitive: false).hashData(data)) {
         validationData.message = "Password harus ada space";
-      } else if (RegExp(r"(kontol|memek|anjing|bangsat)", caseSensitive: false)
-          .hashData(data)) {
+      } else if (RegExp(r"(kontol|memek|anjing|bangsat)", caseSensitive: false).hashData(data)) {
         validationData.message = "Password tidak boleh mengandung kata kasar";
       } else {
         validationData.is_valid = true;

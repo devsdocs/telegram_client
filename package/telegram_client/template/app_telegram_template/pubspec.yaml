@@ -14,7 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.5
-  galaxeus_lib: ^0.0.71
+  galaxeus_lib: ^0.0.72
   url_launcher: ^6.1.11
   universal_io: ^2.2.0
   galaxeus_lib_flutter: ^0.0.8
