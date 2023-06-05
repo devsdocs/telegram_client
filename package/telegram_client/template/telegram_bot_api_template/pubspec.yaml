@@ -10,21 +10,21 @@ funding:
  - https://github.com/azkadev
 
 environment:
-  sdk: '>=2.19.4 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  telegram_client: ^0.4.17
+  telegram_client: any
   path: ^1.8.3
-  galaxeus_lib: ^0.0.66
+  galaxeus_lib: ^0.0.73
   alfred: ^1.0.1+2
-  supabase_client: ^0.0.18
-  xendit: ^0.0.13
+  supabase_client: ^0.0.19
+  xendit: ^0.0.16
   isar: ^3.1.0+1
 
 dev_dependencies:
   lints: ^2.1.0
   test: ^1.21.0
-  packagex: ^0.0.25
+  packagex: ^0.0.28
   isar_generator: ^3.1.0+1
   build_runner: ^2.4.2
 

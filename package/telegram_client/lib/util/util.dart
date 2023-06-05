@@ -33,14 +33,20 @@ class TgUtils {
 
   List<int> messagesTdlibToApi(dynamic message_ids) {
     if (message_ids is List<int>) {
-      return message_ids.map((message_id) => messageTdlibToApi(message_id).toInt()).toList().cast<int>();
+      return message_ids
+          .map((message_id) => messageTdlibToApi(message_id).toInt())
+          .toList()
+          .cast<int>();
     }
     return [];
   }
 
   List<int> messagesApiToTdlib(message_ids) {
     if (message_ids is List<int>) {
-      return message_ids.map((message_id) => messageApiToTdlib(message_id).toInt()).toList().cast<int>();
+      return message_ids
+          .map((message_id) => messageApiToTdlib(message_id).toInt())
+          .toList()
+          .cast<int>();
     }
     return [];
   }
@@ -55,12 +61,14 @@ class TgUtils {
   }
 
   /// ccreate offset for tl
-  static List<String> splitByLength(String text, int length, {bool ignoreEmpty = false}) {
+  static List<String> splitByLength(String text, int length,
+      {bool ignoreEmpty = false}) {
     List<String> pieces = [];
 
     for (int i = 0; i < text.length; i += length) {
       int offset = i + length;
-      String piece = text.substring(i, offset >= text.length ? text.length : offset);
+      String piece =
+          text.substring(i, offset >= text.length ? text.length : offset);
 
       if (ignoreEmpty) {
         piece = piece.replaceAll(RegExp(r'\s+'), '');

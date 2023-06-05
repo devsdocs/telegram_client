@@ -59,8 +59,10 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
     vsync: this,
   );
 
-  TextEditingController first_name_text_editing_controller = TextEditingController();
-  TextEditingController last_name_text_editing_controller = TextEditingController();
+  TextEditingController first_name_text_editing_controller =
+      TextEditingController();
+  TextEditingController last_name_text_editing_controller =
+      TextEditingController();
   TextEditingController textEditingController = TextEditingController();
   TextEditingController reasonEditingController = TextEditingController();
   TextEditingController keyEditingController = TextEditingController();
@@ -69,6 +71,12 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
   SignPageWaitType signPageWaitType = SignPageWaitType.phone_number;
   List<int> code = [];
   bool is_procces = false;
+  bool get is_test_dc {
+    try {
+      return widget.tdlib.client_option["use_test_dc"] as bool;
+    } catch (e) {}
+    return false;
+  }
 
   @override
   void initState() {
@@ -91,7 +99,9 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
           visible: (signPageWaitType == SignPageWaitType.phone_number),
           child: FloatingActionButton(
             onPressed: () async {
-              ValidationData validationData = validation(data: textEditingController.text, validationDataType: ValidationDataType.phone_number);
+              ValidationData validationData = validation(
+                  data: textEditingController.text,
+                  validationDataType: ValidationDataType.phone_number);
               if (validationData.message != null) {
                 //
                 await CoolAlert.show(
@@ -138,18 +148,30 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
 
                     p.printPretty();
                     if (p["@type"] == "error") {
-                      if (RegExp(r"(because it is already in use by current program)", caseSensitive: false).hashData(p["message"])) {
-                        widget.tdlib.client_option["database_directory"] = path.join(widget.tdlib.client_option["database_directory"], "data_${DateTime.now().millisecondsSinceEpoch}");
+                      if (RegExp(
+                              r"(because it is already in use by current program)",
+                              caseSensitive: false)
+                          .hashData(p["message"])) {
+                        widget.tdlib.client_option["database_directory"] =
+                            path.join(
+                                widget
+                                    .tdlib.client_option["database_directory"],
+                                "data_${DateTime.now().millisecondsSinceEpoch}");
                         continue;
                       }
                       break;
                     }
-                  } else if (res["@type"] == "authorizationStateWaitEncryptionKey") {
-                    bool isEncrypted = res["authorization_state"]['is_encrypted'];
+                  } else if (res["@type"] ==
+                      "authorizationStateWaitEncryptionKey") {
+                    bool isEncrypted =
+                        res["authorization_state"]['is_encrypted'];
                     if (isEncrypted) {
                       var p = await widget.tdlib.invoke(
                         "checkDatabaseEncryptionKey",
-                        parameters: {"encryption_key": base64.encode(utf8.encode(widget.tdlib.client_option["database_key"]))},
+                        parameters: {
+                          "encryption_key": base64.encode(utf8.encode(
+                              widget.tdlib.client_option["database_key"]))
+                        },
                         isThrowOnError: false,
                       );
 
@@ -160,7 +182,10 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                     } else {
                       var p = await widget.tdlib.invoke(
                         "setDatabaseEncryptionKey",
-                        parameters: {"new_encryption_key": base64.encode(utf8.encode(widget.tdlib.client_option["database_key"]))},
+                        parameters: {
+                          "new_encryption_key": base64.encode(utf8.encode(
+                              widget.tdlib.client_option["database_key"]))
+                        },
                         isThrowOnError: false,
                       );
 
@@ -169,14 +194,16 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                         break;
                       }
                     }
-                  } else if (res["@type"] == "authorizationStateWaitPhoneNumber") {
+                  } else if (res["@type"] ==
+                      "authorizationStateWaitPhoneNumber") {
                     if (textEditingController.text.isEmpty) {
                       break;
                     }
                     var code = await widget.tdlib.invoke(
                       "setAuthenticationPhoneNumber",
                       parameters: {
-                        "phone_number": textEditingController.text.replaceAll(RegExp(r"((\+)| )", caseSensitive: false), ""),
+                        "phone_number": textEditingController.text.replaceAll(
+                            RegExp(r"((\+)| )", caseSensitive: false), ""),
                       },
                       isThrowOnError: false,
                     );
@@ -238,7 +265,7 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: const [
                 Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: 5,
@@ -305,7 +332,9 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                 margin: const EdgeInsets.all(20),
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                 onPressed: () async {
-                  ValidationData validationData = validation(data: first_name_text_editing_controller.text, validationDataType: ValidationDataType.first_name);
+                  ValidationData validationData = validation(
+                      data: first_name_text_editing_controller.text,
+                      validationDataType: ValidationDataType.first_name);
                   if (validationData.message != null) {
                     //
                     await CoolAlert.show(
@@ -334,12 +363,15 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                         isThrowOnError: false,
                       );
                       res.printPretty();
-                      if (res["@type"] == "authorizationStateWaitRegistration") {
+                      if (res["@type"] ==
+                          "authorizationStateWaitRegistration") {
                         var p = await widget.tdlib.invoke(
                           "registerUser",
                           parameters: {
-                            "first_name": first_name_text_editing_controller.text,
-                            "last_name": first_name_text_editing_controller.text,
+                            "first_name":
+                                first_name_text_editing_controller.text,
+                            "last_name":
+                                first_name_text_editing_controller.text,
                           },
                           isThrowOnError: false,
                         );
@@ -445,7 +477,9 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                 margin: const EdgeInsets.all(20),
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                 onPressed: () async {
-                  ValidationData validationData = validation(data: textEditingController.text, validationDataType: ValidationDataType.password);
+                  ValidationData validationData = validation(
+                      data: textEditingController.text,
+                      validationDataType: ValidationDataType.password);
                   if (validationData.message != null) {
                     //
                     await CoolAlert.show(
@@ -531,7 +565,9 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                 margin: const EdgeInsets.all(20),
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                 onPressed: () async {
-                  ValidationData validationData = validation(data: textEditingController.text, validationDataType: ValidationDataType.code);
+                  ValidationData validationData = validation(
+                      data: textEditingController.text,
+                      validationDataType: ValidationDataType.code);
                   if (validationData.message != null) {
                     //
                     await CoolAlert.show(
@@ -589,14 +625,15 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                         }
                         setState(() {
                           textEditingController.clear();
-                        }); 
-                      } else if (res["@type"] == "authorizationStateWaitRegistration") {
+                        });
+                      } else if (res["@type"] ==
+                          "authorizationStateWaitRegistration") {
                         setState(() {
                           is_procces = false;
                           signPageWaitType = SignPageWaitType.registration;
                         });
                         break;
-                      } else  if (res["@type"] == "authorizationStateReady") {
+                      } else if (res["@type"] == "authorizationStateReady") {
                         context.navigator().pushReplacement(
                           MaterialPageRoute(
                             builder: (context) {
@@ -718,7 +755,7 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: const [
                 Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: 5,
@@ -772,18 +809,29 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
           ),
           child: Builder(
             builder: (context) {
-              LanguageDetailData languageDetailData = languageCodeDetailData.languageDetailDataQueryForceSync(
+              LanguageDetailData languageDetailData =
+                  languageCodeDetailData.languageDetailDataQueryForceSync(
                 onData: (languageDetailData) {
                   try {
-                    if (languageDetailData.dial_code is String && languageDetailData.dial_code!.isNotEmpty) {
-                      if (RegExp("^(${languageDetailData.dial_code!.replaceAll("+", "")})", caseSensitive: false).hashData(textEditingController.text.replaceAll(RegExp(r"(\+| )"), ""))) {
+                    if (languageDetailData.dial_code is String &&
+                        languageDetailData.dial_code!.isNotEmpty) {
+                      if (RegExp(
+                              "^(${languageDetailData.dial_code!.replaceAll("+", "")})",
+                              caseSensitive: false)
+                          .hashData(textEditingController.text
+                              .replaceAll(RegExp(r"(\+| )"), ""))) {
                         return true;
                       }
                     }
                   } catch (e) {}
                   return false;
                 },
-                defaultLanguageDetailData: LanguageDetailData.create(special_type: "", name: "Unknown", flag: "-", code: "-", dial_code: "unknown"),
+                defaultLanguageDetailData: LanguageDetailData.create(
+                    special_type: "",
+                    name: "Unknown",
+                    flag: "-",
+                    code: "-",
+                    dial_code: "unknown"),
               );
               return TextFormField(
                 cursorColor: Colors.black,
@@ -791,7 +839,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                 readOnly: true,
                 enabled: true,
                 // initialValue: languageDetailData.name,
-                controller: TextEditingController(text: languageDetailData.name),
+                controller:
+                    TextEditingController(text: languageDetailData.name),
                 onTap: () async {
                   await showCountryList(context: context);
                 },
@@ -811,7 +860,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                     color: Colors.grey,
                     fontSize: 14.0,
                   ),
-                  prefixIconConstraints: BoxConstraints(minWidth: 18, minHeight: 18),
+                  prefixIconConstraints:
+                      BoxConstraints(minWidth: 18, minHeight: 18),
                   prefixIcon: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -939,12 +989,14 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
   Future<void> showCountryList({
     required BuildContext context,
   }) async {
-    List<MapEntry<String, LanguageDetailData>> languageCodeDetailDatas = languageCodeDetailData.entries.toList();
+    List<MapEntry<String, LanguageDetailData>> languageCodeDetailDatas =
+        languageCodeDetailData.entries.toList();
 
     await showDialog(
       context: context,
       builder: (context) {
-        TextEditingController searchTextEditingController = TextEditingController();
+        TextEditingController searchTextEditingController =
+            TextEditingController();
         bool is_show_search = false;
         return StatefulBuilder(
           builder: (context, setStat) {
@@ -973,17 +1025,20 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                       Future(() {
                         setStat(
                           () {
-                            languageCodeDetailDatas = languageCodeDetailData.entries
+                            languageCodeDetailDatas = languageCodeDetailData
+                                .entries
                                 .toList()
                                 .map((e) {
                                   try {
-                                    if (RegExp(value, caseSensitive: false).hashData(e.value.name)) {
+                                    if (RegExp(value, caseSensitive: false)
+                                        .hashData(e.value.name)) {
                                       return e;
                                     }
                                   } catch (e) {}
                                   return null;
                                 })
-                                .whereType<MapEntry<String, LanguageDetailData>>()
+                                .whereType<
+                                    MapEntry<String, LanguageDetailData>>()
                                 .toList();
                           },
                         );
@@ -999,7 +1054,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                         onPressed: () {
                           setStat(() {
                             searchTextEditingController.clear();
-                            languageCodeDetailDatas = languageCodeDetailData.entries.toList();
+                            languageCodeDetailDatas =
+                                languageCodeDetailData.entries.toList();
                           });
                         },
                         child: Icon(Icons.close),
@@ -1082,9 +1138,15 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
                   return ListTile(
                     onTap: () {
                       if (context.navigator().canPop()) {
-                        if (languageCodeDetailDatas[index].value.dial_code is String) {
+                        if (languageCodeDetailDatas[index].value.dial_code
+                            is String) {
                           setState(() {
-                            textEditingController.text = (languageCodeDetailDatas[index].value.dial_code ?? "").replaceAll("+", "");
+                            textEditingController.text =
+                                (languageCodeDetailDatas[index]
+                                            .value
+                                            .dial_code ??
+                                        "")
+                                    .replaceAll("+", "");
                           });
                         }
                         context.navigator().pop();
@@ -1175,9 +1237,13 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
               Radius.circular(20),
             ),
             onPressed: () async {
-              ValidationData validationDataPassword = validation(data: keyEditingController.text, validationDataType: ValidationDataType.password);
+              ValidationData validationDataPassword = validation(
+                  data: keyEditingController.text,
+                  validationDataType: ValidationDataType.password);
 
-              ValidationData validationData = validation(data: textEditingController.text, validationDataType: ValidationDataType.username);
+              ValidationData validationData = validation(
+                  data: textEditingController.text,
+                  validationDataType: ValidationDataType.username);
 
               if (validationData.message != null) {
                 //
@@ -1270,9 +1336,13 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
               ),
             ),
             onPressed: () async {
-              ValidationData validationDataPassword = validation(data: keyEditingController.text, validationDataType: ValidationDataType.password);
+              ValidationData validationDataPassword = validation(
+                  data: keyEditingController.text,
+                  validationDataType: ValidationDataType.password);
 
-              ValidationData validationData = validation(data: textEditingController.text, validationDataType: ValidationDataType.username);
+              ValidationData validationData = validation(
+                  data: textEditingController.text,
+                  validationDataType: ValidationDataType.username);
               if (validationData.message != null) {
                 //
                 await CoolAlert.show(
@@ -1318,9 +1388,13 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
               ),
             ),
             onPressed: () async {
-              ValidationData validationDataPassword = validation(data: keyEditingController.text, validationDataType: ValidationDataType.password);
+              ValidationData validationDataPassword = validation(
+                  data: keyEditingController.text,
+                  validationDataType: ValidationDataType.password);
 
-              ValidationData validationData = validation(data: textEditingController.text, validationDataType: ValidationDataType.username);
+              ValidationData validationData = validation(
+                  data: textEditingController.text,
+                  validationDataType: ValidationDataType.username);
 
               if (validationData.message != null) {
                 //
@@ -1362,7 +1436,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
         prefixIconData: Icons.phone,
         readOnly: readOnly,
         validator: (String? data) {
-          ValidationData validationData = validation(data: data, validationDataType: ValidationDataType.phone_number);
+          ValidationData validationData = validation(
+              data: data, validationDataType: ValidationDataType.phone_number);
           return validationData.message;
         },
       ),
@@ -1401,7 +1476,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
         controller: textEditingController,
         readOnly: readOnly,
         validator: (String? data) {
-          ValidationData validationData = validation(data: data, validationDataType: ValidationDataType.username);
+          ValidationData validationData = validation(
+              data: data, validationDataType: ValidationDataType.username);
           return validationData.message;
         },
       ),
@@ -1437,7 +1513,8 @@ class _SignPageState extends State<SignPage> with TickerProviderStateMixin {
         controller: keyEditingController,
         readOnly: readOnly,
         validator: (String? data) {
-          ValidationData validationData = validation(data: data, validationDataType: ValidationDataType.password);
+          ValidationData validationData = validation(
+              data: data, validationDataType: ValidationDataType.password);
           return validationData.message;
         },
         onPressed: () {

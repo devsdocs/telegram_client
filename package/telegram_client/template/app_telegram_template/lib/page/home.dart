@@ -47,6 +47,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void dispose() {
     if (is_init_listener) {
@@ -58,10 +60,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         leading: MaterialButton(
           minWidth: 0,
-          onPressed: () async {},
+          onPressed: () async {
+            if (scaffoldKey.currentState!.isDrawerOpen) {
+              // scaffoldKey.currentState!
+              scaffoldKey.currentState!.closeDrawer();
+            } else {
+              scaffoldKey.currentState!.openDrawer();
+            }
+          },
           child: const Icon(Icons.menu),
         ),
         title: const Text("Telegram Client"),
@@ -77,6 +87,79 @@ class _HomePageState extends State<HomePage> {
             child: const Icon(Icons.search),
           ),
         ],
+      ),
+      drawer: Drawer(
+        width: context.width / 2,
+        child: ListView(
+          children: [
+            ListTile(
+              onTap: () {},
+              leading: const Icon(
+                Icons.people,
+                color: Colors.blueGrey,
+              ),
+              title: const Text(
+                'Group Baru',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ListTile(
+              onTap: () async {},
+              leading: const Icon(
+                Icons.contact_phone,
+                color: Colors.blueGrey,
+              ),
+              title: const Text(
+                'Kontak',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ListTile(
+              onTap: () async {},
+              leading: const Icon(
+                Icons.call,
+                color: Colors.blueGrey,
+              ),
+              title: const Text(
+                'Panggilan',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ListTile(
+              onTap: () async {},
+              leading: const Icon(
+                Icons.people,
+                color: Colors.blueGrey,
+              ),
+              title: const Text(
+                'Pengguna Sekitar',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ListTile(
+              onTap: () async {},
+              leading: const Icon(
+                Icons.message,
+                color: Colors.blueGrey,
+              ),
+              title: const Text(
+                'Pesan Tersimpan',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ListTile(
+              onTap: () async {},
+              leading: const Icon(
+                Icons.settings,
+                color: Colors.blueGrey,
+              ),
+              title: const Text(
+                'Settings',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: ConstrainedBox(
@@ -99,13 +182,16 @@ class _HomePageState extends State<HomePage> {
 
               if (res["@type"] == "chats" && res["total_count"] is int) {
                 int total_count = res["total_count"];
-                return await widget.tdlib.invoke(
-                  "getChats",
-                  parameters: {
-                    "limit": total_count,
-                  },
-                  isThrowOnError: false,
-                );
+                if (total_count > 500) {
+                  return await widget.tdlib.invoke(
+                    "getChats",
+                    parameters: {
+                      "limit": total_count,
+                    },
+                    isThrowOnError: false,
+                  );
+                }
+                return res;
               }
 
               return {};
@@ -155,7 +241,8 @@ class _HomePageState extends State<HomePage> {
 
                           if (chat["photo"] is Map) {
                             Map photo = chat["photo"];
-                            if (photo["minithumbnail"] is Map && photo["minithumbnail"]["data"] is String) {
+                            if (photo["minithumbnail"] is Map &&
+                                photo["minithumbnail"]["data"] is String) {
                               image = DecorationImage(
                                 fit: BoxFit.cover,
                                 image: Image.memory(
@@ -170,7 +257,8 @@ class _HomePageState extends State<HomePage> {
                             leading: Container(
                               height: 45,
                               width: 45,
-                              decoration: BoxDecoration(color: Colors.red, image: image),
+                              decoration: BoxDecoration(
+                                  color: Colors.red, image: image),
                             ),
                             title: Text(
                               chat["title"] ?? "",
@@ -209,7 +297,8 @@ class _HomePageState extends State<HomePage> {
     await showDialog(
       context: context,
       builder: (context) {
-        TextEditingController searchTextEditingController = TextEditingController();
+        TextEditingController searchTextEditingController =
+            TextEditingController();
 
         return StatefulBuilder(
           builder: (context, setStat) {
@@ -313,7 +402,8 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () async {
                       setStat(() {});
                     },
-                    child: const RotatedBox(quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
+                    child: const RotatedBox(
+                        quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
                   ),
                 ],
               ),
@@ -380,11 +470,13 @@ class _HomePageState extends State<HomePage> {
 
                               if (chat["photo"] is Map) {
                                 Map photo = chat["photo"];
-                                if (photo["minithumbnail"] is Map && photo["minithumbnail"]["data"] is String) {
+                                if (photo["minithumbnail"] is Map &&
+                                    photo["minithumbnail"]["data"] is String) {
                                   image = DecorationImage(
                                     fit: BoxFit.cover,
                                     image: Image.memory(
-                                      base64Decode(photo["minithumbnail"]["data"]),
+                                      base64Decode(
+                                          photo["minithumbnail"]["data"]),
                                     ).image,
                                   );
                                 }
@@ -395,7 +487,8 @@ class _HomePageState extends State<HomePage> {
                                 leading: Container(
                                   height: 45,
                                   width: 45,
-                                  decoration: BoxDecoration(color: Colors.red, image: image),
+                                  decoration: BoxDecoration(
+                                      color: Colors.red, image: image),
                                 ),
                                 title: Text(
                                   chat["title"] ?? "",

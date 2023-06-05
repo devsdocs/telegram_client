@@ -320,7 +320,7 @@ extension TdlibMethodExtensions on Tdlib {
     if (chat["detail"] is Map && chat["detail"]["member_count"] is int) {
       member_count = chat["detail"]["member_count"];
     }
-    var (List<int>  list_offset, int limit_count) = TgUtils.createOffset(
+    var (List<int> list_offset, int limit_count) = TgUtils.createOffset(
       totalCount: member_count.toInt(),
       limitCount: 200,
     );

@@ -76,6 +76,7 @@ class LibTdJson {
   bool is_cli;
   bool is_android = Platform.isAndroid;
   List<TdlibClient> clients = [];
+  Map<int, TdlibClient> client = {};
   int client_id = 0;
   String event_invoke = "invoke";
   String event_update = "update";
@@ -85,12 +86,10 @@ class LibTdJson {
   bool is_auto_get_chat = false;
   Duration invoke_time_out = Duration(minutes: 10);
   double timeOutUpdate;
-  FutureOr<void> Function(dynamic update, LibTdJson libTdJson)?
-      on_receive_update;
-  FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
-      on_generate_extra_invoke;
-  FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)?
-      on_get_invoke_data;
+  bool is_invoke_throw_on_error = false;
+  FutureOr<void> Function(dynamic update, LibTdJson libTdJson)? on_receive_update;
+  FutureOr<String> Function(int client_id, LibTdJson libTdJson)? on_generate_extra_invoke;
+  FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)? on_get_invoke_data;
   LibTdJson({
     String? pathTdl,
     Map? clientOption,
@@ -103,10 +102,12 @@ class LibTdJson {
     Duration? delayInvoke,
     Duration? invokeTimeOut,
     bool isAutoGetChat = false,
+    bool isInvokeThrowOnError = true,
     this.on_generate_extra_invoke,
     this.on_get_invoke_data,
     this.on_receive_update,
   }) {
+    is_invoke_throw_on_error = isInvokeThrowOnError;
     pathTdl ??= "libtdjson.${getFormatLibrary}";
     path_tdlib = pathTdl;
     is_auto_get_chat = isAutoGetChat;
@@ -140,8 +141,7 @@ class LibTdJson {
       } else if (update is TdlibIsolateReceiveDataError) {
         TdlibIsolateReceiveDataError tdlibIsolateReceiveDataError = update;
         try {
-          TdlibClient? tdlibClient =
-              clients.getClientById(tdlibIsolateReceiveDataError.clientId);
+          TdlibClient? tdlibClient = clients.getClientById(tdlibIsolateReceiveDataError.clientId);
           if (tdlibClient != null) {
             tdlibClient.close();
           }
@@ -179,11 +179,7 @@ class LibTdJson {
   /// create client id for multi client
   int client_create() {
     // pkgffi;
-    return tdLib
-        .lookupFunction<ffi.Pointer Function(), ffi.Pointer Function()>(
-            '${is_android ? "_" : ""}td_json_client_create')
-        .call()
-        .address;
+    return tdLib.lookupFunction<ffi.Pointer Function(), ffi.Pointer Function()>('${is_android ? "_" : ""}td_json_client_create').call().address;
   }
 
   ffi.Pointer client_id_addres(int clientId) {
@@ -193,16 +189,8 @@ class LibTdJson {
   /// client_send
   void client_send(int clientId, [Map? parameters]) {
     ffi.Pointer client_id_addres_data = client_id_addres(clientId);
-    ffi.Pointer<pkgffi.Utf8> request_data =
-        convert.json.encode(parameters).toNativeUtf8();
-    tdLib
-        .lookupFunction<
-                ffi.Void Function(
-                    ffi.Pointer client, ffi.Pointer<pkgffi.Utf8> request),
-                void Function(
-                    ffi.Pointer client, ffi.Pointer<pkgffi.Utf8> request)>(
-            '${is_android ? "_" : ""}td_json_client_send')
-        .call(client_id_addres_data, request_data);
+    ffi.Pointer<pkgffi.Utf8> request_data = convert.json.encode(parameters).toNativeUtf8();
+    tdLib.lookupFunction<ffi.Void Function(ffi.Pointer client, ffi.Pointer<pkgffi.Utf8> request), void Function(ffi.Pointer client, ffi.Pointer<pkgffi.Utf8> request)>('${is_android ? "_" : ""}td_json_client_send').call(client_id_addres_data, request_data);
     pkgffi.malloc.free(request_data);
     return;
   }
@@ -210,18 +198,9 @@ class LibTdJson {
   /// client_execute
   Map<String, dynamic> client_execute(int clientId, [Map? parameters]) {
     ffi.Pointer client_id_addres_data = client_id_addres(clientId);
-    ffi.Pointer<pkgffi.Utf8> request_data =
-        convert.json.encode(parameters).toNativeUtf8();
-    ffi.Pointer<pkgffi.Utf8> result = tdLib
-        .lookupFunction<
-                ffi.Pointer<pkgffi.Utf8> Function(
-                    ffi.Pointer, ffi.Pointer<pkgffi.Utf8>),
-                ffi.Pointer<pkgffi.Utf8> Function(
-                    ffi.Pointer, ffi.Pointer<pkgffi.Utf8>)>(
-            '${is_android ? "_" : ""}td_json_client_execute')
-        .call(client_id_addres_data, request_data);
-    Map<String, dynamic> result_data =
-        convert.json.decode(result.toDartString());
+    ffi.Pointer<pkgffi.Utf8> request_data = convert.json.encode(parameters).toNativeUtf8();
+    ffi.Pointer<pkgffi.Utf8> result = tdLib.lookupFunction<ffi.Pointer<pkgffi.Utf8> Function(ffi.Pointer, ffi.Pointer<pkgffi.Utf8>), ffi.Pointer<pkgffi.Utf8> Function(ffi.Pointer, ffi.Pointer<pkgffi.Utf8>)>('${is_android ? "_" : ""}td_json_client_execute').call(client_id_addres_data, request_data);
+    Map<String, dynamic> result_data = convert.json.decode(result.toDartString());
     pkgffi.malloc.free(request_data);
 
     return result_data;
@@ -230,12 +209,7 @@ class LibTdJson {
   /// client_destroy
   void client_destroy(int clientId) {
     ffi.Pointer client_id_addres_data = client_id_addres(clientId);
-    tdLib
-        .lookupFunction<
-            ffi.Void Function(ffi.Pointer),
-            void Function(
-                ffi.Pointer)>('${is_android ? "_" : ""}td_json_client_destroy')
-        .call(client_id_addres_data);
+    tdLib.lookupFunction<ffi.Void Function(ffi.Pointer), void Function(ffi.Pointer)>('${is_android ? "_" : ""}td_json_client_destroy').call(client_id_addres_data);
 
     return;
   }
@@ -244,15 +218,8 @@ class LibTdJson {
   Map<String, dynamic>? client_receive(int clientId, [double timeout = 1.0]) {
     try {
       ffi.Pointer client_id_addres_data = client_id_addres(clientId);
-      ffi.Pointer<pkgffi.Utf8> update = tdLib
-          .lookupFunction<
-              ffi.Pointer<pkgffi.Utf8> Function(ffi.Pointer, ffi.Double),
-              ffi.Pointer<pkgffi.Utf8> Function(ffi.Pointer,
-                  double)>('${is_android ? "_" : ""}td_json_client_receive')
-          .call(client_id_addres_data, timeout);
-      if (update.address != 0 &&
-          update.toDartString() is String &&
-          update.toDartString().toString().isNotEmpty) {
+      ffi.Pointer<pkgffi.Utf8> update = tdLib.lookupFunction<ffi.Pointer<pkgffi.Utf8> Function(ffi.Pointer, ffi.Double), ffi.Pointer<pkgffi.Utf8> Function(ffi.Pointer, double)>('${is_android ? "_" : ""}td_json_client_receive').call(client_id_addres_data, timeout);
+      if (update.address != 0 && update.toDartString() is String && update.toDartString().toString().isNotEmpty) {
         Map<String, dynamic>? updateOrigin;
         try {
           updateOrigin = convert.json.decode(update.toDartString());
@@ -294,11 +261,9 @@ class LibTdJson {
           );
           while (true) {
             if (tdlibIsolateData.delayUpdate != null) {
-              await Future.delayed(
-                  tdlibIsolateData.delayUpdate ?? Duration.zero);
+              await Future.delayed(tdlibIsolateData.delayUpdate ?? Duration.zero);
             }
-            Map? new_update = tg.client_receive(
-                tdlibIsolateData.clientId, tdlibIsolateData.timeOutUpdate);
+            Map? new_update = tg.client_receive(tdlibIsolateData.clientId, tdlibIsolateData.timeOutUpdate);
             if (new_update != null) {
               tdlibIsolateData.sendPort.send(
                 TdlibIsolateReceiveData(
@@ -381,6 +346,7 @@ class LibTdJson {
     int clientId, {
     bool isClose = false,
     String? extra,
+    bool isInvokeThrowOnError = true,
   }) async {
     TdlibClient? tdlibClient = getClientById(clientId);
     if (tdlibClient != null) {
@@ -391,6 +357,7 @@ class LibTdJson {
             clientId: clientId,
             extra: extra,
             isVoid: true,
+            isInvokeThrowOnError: isInvokeThrowOnError,
           );
         } catch (e) {}
       }
@@ -415,14 +382,11 @@ class LibTdJson {
   }
 
   /// receive all update data
-  Listener on(
-      String type_update, FutureOr<dynamic> Function(UpdateTd update) callback,
-      {void Function(Object data)? onError}) {
+  Listener on(String type_update, FutureOr<dynamic> Function(UpdateTd update) callback, {void Function(Object data)? onError}) {
     return event_emitter.on(type_update, null, (Event ev, context) async {
       try {
         if (ev.eventData is TdlibIsolateReceiveData) {
-          TdlibIsolateReceiveData tdlibIsolateReceiveData =
-              (ev.eventData as TdlibIsolateReceiveData);
+          TdlibIsolateReceiveData tdlibIsolateReceiveData = (ev.eventData as TdlibIsolateReceiveData);
           await callback(UpdateTd(
             update: tdlibIsolateReceiveData.updateData,
             client_id: tdlibIsolateReceiveData.clientId,
@@ -457,16 +421,15 @@ class LibTdJson {
     Duration? delayDuration,
     Duration? invokeTimeOut,
     String? extra,
-    bool? iSAutoGetChat,
-    FutureOr<String> Function(int client_id, LibTdJson libTdJson)?
-        onGenerateExtraInvoke,
-    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)?
-        onGetInvokeData,
-    bool isThrowOnError = true,
+    bool? isAutoGetChat,
+    bool? isInvokeThrowOnError,
+    FutureOr<String> Function(int client_id, LibTdJson libTdJson)? onGenerateExtraInvoke,
+    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)? onGetInvokeData,
   }) async {
+    isInvokeThrowOnError ??= is_invoke_throw_on_error;
     onGetInvokeData ??= on_get_invoke_data;
     onGenerateExtraInvoke ??= on_generate_extra_invoke;
-    iSAutoGetChat ??= is_auto_get_chat;
+    isAutoGetChat ??= is_auto_get_chat;
     clientId ??= client_id;
     invokeTimeOut ??= invoke_time_out;
     parameters ??= {};
@@ -503,9 +466,7 @@ class LibTdJson {
       parameters["@extra"] = extra_id;
     }
 
-    if (iSAutoGetChat &&
-        RegExp(r"^(sendMessage|getChatMember)$", caseSensitive: false)
-            .hashData(method)) {
+    if (isAutoGetChat && RegExp(r"^(sendMessage|getChatMember)$", caseSensitive: false).hashData(method)) {
       if (parameters["chat_id"] is int) {
         client_send(
           clientId,
@@ -574,7 +535,7 @@ class LibTdJson {
       if (result["@type"] is String) {
         event_emitter.off(listener);
         if (result["@type"] == "error") {
-          if (!isThrowOnError) {
+          if (!isInvokeThrowOnError) {
             return result;
           }
 
@@ -592,13 +553,41 @@ class LibTdJson {
           "invoke_request": requestMethod,
         };
 
-        if (!isThrowOnError) {
+        if (!isInvokeThrowOnError) {
           return result;
         }
 
         throw result;
       }
     }
+  }
+
+  Future<Map> request(
+    String method, {
+    Map<String, dynamic>? parameters,
+    int? clientId,
+    bool isVoid = false,
+    Duration? delayDuration,
+    Duration? invokeTimeOut,
+    String? extra,
+    bool? isAutoGetChat,
+    FutureOr<String> Function(int client_id, LibTdJson libTdJson)? onGenerateExtraInvoke,
+    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)? onGetInvokeData,
+    bool? isInvokeThrowOnError,
+  }) async {
+    return await invoke(
+      method,
+      parameters: parameters,
+      clientId: clientId,
+      isVoid: isVoid,
+      delayDuration: delayDuration,
+      invokeTimeOut: invokeTimeOut,
+      extra: extra,
+      isAutoGetChat: isAutoGetChat,
+      onGenerateExtraInvoke: onGenerateExtraInvoke,
+      onGetInvokeData: onGetInvokeData,
+      isInvokeThrowOnError: isInvokeThrowOnError,
+    );
   }
 
   /// call api latest [Tdlib-Methods](https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1_function.html)

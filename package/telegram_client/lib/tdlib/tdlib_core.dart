@@ -146,6 +146,7 @@ class Tdlib extends LibTdJson {
     super.on_get_invoke_data,
     super.on_receive_update,
     super.on_generate_extra_invoke,
+    super.isInvokeThrowOnError,
   }) {
     if (clientId != null) {
       client_option["start"] = false;
@@ -212,32 +213,34 @@ class Tdlib extends LibTdJson {
   }
 
   /// set up authorizationStateWaitTdlibParameters new client without more code
-  Future<void> initClient(
+  Future<Map?> initClient(
     UpdateTd update, {
     Map? tdlibParameters,
     int? clientId,
-    bool isVoid = true,
+    bool isVoid = false,
     String? extra,
+    bool isInvokeThrowOnError = true,
   }) async {
     if (update.raw["authorization_state"] is Map) {
       var authStateType = update.raw["authorization_state"]["@type"];
       if (authStateType == "authorizationStateWaitTdlibParameters") {
-        var optios = client_option;
+        var optios = {...client_option};
         if (tdlibParameters != null) {
           optios.addAll(tdlibParameters);
         }
-        await invoke(
+        return await invoke(
           "setTdlibParameters",
           parameters: optios.cast<String, dynamic>(),
           clientId: clientId,
           isVoid: isVoid,
           extra: extra,
+          isInvokeThrowOnError: isInvokeThrowOnError,
         );
       }
       if (authStateType == "authorizationStateWaitEncryptionKey") {
         bool isEncrypted = update.raw["authorization_state"]['is_encrypted'];
         if (isEncrypted) {
-          await invoke(
+          return await invoke(
             "checkDatabaseEncryptionKey",
             parameters: {
               "encryption_key": convert.base64.encode(convert.utf8.encode(client_option["database_key"])),
@@ -245,9 +248,10 @@ class Tdlib extends LibTdJson {
             clientId: clientId,
             isVoid: isVoid,
             extra: extra,
+            isInvokeThrowOnError: isInvokeThrowOnError,
           );
         } else {
-          await invoke(
+          return await invoke(
             "setDatabaseEncryptionKey",
             parameters: {
               "new_encryption_key": convert.base64.encode(convert.utf8.encode(client_option["database_key"])),
@@ -255,19 +259,22 @@ class Tdlib extends LibTdJson {
             clientId: clientId,
             isVoid: isVoid,
             extra: extra,
+            isInvokeThrowOnError: isInvokeThrowOnError,
           );
         }
       }
 
       if (authStateType == "authorizationStateClosed") {
-        await exitClientById(update.client_id);
+        await exitClientById(update.client_id, isInvokeThrowOnError: isInvokeThrowOnError);
+
+        return {"@type": "ok"};
       }
 
       if (authStateType == "authorizationStateReady") {
         TdlibClient? tdlibClient = getClientById(update.client_id);
         if (tdlibClient == null || tdlibClient.client_user_id != 0) {
           if (tdlibClient == null) {
-            return;
+            return null;
           }
         }
         Map get_me = await getMe(
@@ -278,11 +285,12 @@ class Tdlib extends LibTdJson {
           if (tdlib_client.client_id == update.client_id) {
             tdlib_client.client_user_id = get_me["result"]["id"];
             clients[i].client_user_id = get_me["result"]["id"];
-            return;
+            return null;
           }
         }
       }
     }
+    return null;
   }
 
   /// getMeClient
@@ -839,19 +847,26 @@ class Tdlib extends LibTdJson {
   }
 
   Future<Map> requestInvoke(
+
     String method, {
-    Map? parameters,
+    Map<String, dynamic>? parameters,
     int? clientId,
     bool isVoid = false,
+    Duration? delayDuration,
+    Duration? invokeTimeOut,
     String? extra,
-    bool? iSAutoGetChat,
+    bool? isAutoGetChat,
+    FutureOr<String> Function(int client_id, LibTdJson libTdJson)? onGenerateExtraInvoke,
+    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)? onGetInvokeData,
+    bool? isInvokeThrowOnError,
+    bool isAutoExtendMessage = false,  
   }) async {
     clientId ??= client_id;
     parameters ??= {};
 
-    iSAutoGetChat ??= false;
+    isAutoGetChat ??= false;
     if (parameters["chat_id"] is String && RegExp(r"^(@)?[a-z0-9_]+", caseSensitive: false).hashData(parameters["chat_id"])) {
-      iSAutoGetChat = false;
+      isAutoGetChat = false;
       var search_public_chat = await invoke(
         "searchPublicChat",
         parameters: {
@@ -865,7 +880,7 @@ class Tdlib extends LibTdJson {
       }
     }
     if (parameters["user_id"] is String && RegExp(r"^(@)?[a-z0-9_]+", caseSensitive: false).hashData(parameters["user_id"])) {
-      iSAutoGetChat = false;
+      isAutoGetChat = false;
       var search_public_chat = await invoke(
         "searchPublicChat",
         parameters: {
@@ -892,7 +907,7 @@ class Tdlib extends LibTdJson {
         clientId: clientId,
         isVoid: isVoid,
         extra: extra,
-        iSAutoGetChat: iSAutoGetChat,
+        isAutoGetChat: isAutoGetChat,
       );
       if (isVoid) {
         return {
@@ -950,7 +965,7 @@ class Tdlib extends LibTdJson {
         clientId: clientId,
         isVoid: isVoid,
         extra: extra,
-        iSAutoGetChat: iSAutoGetChat,
+        isAutoGetChat: isAutoGetChat,
       );
     }
     if (RegExp(r"^editMessageText$", caseSensitive: false).hashData(method)) {
@@ -965,7 +980,7 @@ class Tdlib extends LibTdJson {
         clientId: clientId,
         isVoid: isVoid,
         extra: extra,
-        iSAutoGetChat: iSAutoGetChat,
+        isAutoGetChat: isAutoGetChat,
       );
     }
     if (RegExp(r"^joinChatByInviteLink$", caseSensitive: false).hashData(method)) {
@@ -1059,7 +1074,7 @@ class Tdlib extends LibTdJson {
         }),
         clientId: clientId,
         extra: extra,
-        iSAutoGetChat: iSAutoGetChat,
+        isAutoGetChat: isAutoGetChat,
       );
     }
   }
@@ -1077,13 +1092,19 @@ class Tdlib extends LibTdJson {
   /// );
   /// ```
   /// //
+  @override
   Future<Map> request(
     String method, {
-    Map? parameters,
+    Map<String, dynamic>? parameters,
     int? clientId,
     bool isVoid = false,
+    Duration? delayDuration,
+    Duration? invokeTimeOut,
     String? extra,
-    bool? isAutoGetChat = false,
+    bool? isAutoGetChat,
+    FutureOr<String> Function(int client_id, LibTdJson libTdJson)? onGenerateExtraInvoke,
+    FutureOr<Map> Function(String extra, int client_id, LibTdJson libTdJson)? onGetInvokeData,
+    bool? isInvokeThrowOnError,
     bool isAutoExtendMessage = false,
   }) async {
     clientId ??= client_id;
@@ -1111,7 +1132,7 @@ class Tdlib extends LibTdJson {
                 clientId: clientId,
                 isVoid: isVoid,
                 extra: extra,
-                iSAutoGetChat: isAutoGetChat,
+                isAutoGetChat: isAutoGetChat,
               );
               result.add(res);
             } catch (e) {
@@ -1144,7 +1165,7 @@ class Tdlib extends LibTdJson {
                 clientId: clientId,
                 isVoid: isVoid,
                 extra: extra,
-                iSAutoGetChat: isAutoGetChat,
+                isAutoGetChat: isAutoGetChat,
               );
               result.add(res);
             } catch (e) {
@@ -1156,13 +1177,13 @@ class Tdlib extends LibTdJson {
       }
     }
 
-    return requestInvoke(
+    return await requestInvoke(
       method,
       parameters: parameters,
       clientId: clientId,
       isVoid: isVoid,
       extra: extra,
-      iSAutoGetChat: isAutoGetChat,
+      isAutoGetChat: isAutoGetChat,
     );
   }
 
@@ -1182,6 +1203,7 @@ class Tdlib extends LibTdJson {
   Future<Map> getMessage(
     dynamic chat_id,
     dynamic message_id, {
+    String methodName = "getMessage",
     bool is_detail = false,
     bool is_skip_reply_message = false,
     bool is_super_detail = false,
@@ -1214,7 +1236,7 @@ class Tdlib extends LibTdJson {
   ///
   /// }
   /// ```
-
+ 
   Future<Map> editMessageText({
     dynamic chat_id,
     dynamic message_id,
@@ -1921,7 +1943,9 @@ class Tdlib extends LibTdJson {
           try {
             var get_message = await getMessage(
               update["reply_in_chat_id"],
-              update["reply_to_message_id"],
+              update["id"],
+              methodName: "getRepliedMessage",
+              
               is_detail: true,
               is_super_detail: true,
               clientId: clientId,
@@ -2419,6 +2443,7 @@ class Tdlib extends LibTdJson {
           var get_message = await getMessage(
             chat["id"],
             update["message_id"],
+            methodName: "getMessage",
             is_detail: true,
             is_super_detail: true,
             clientId: clientId,
