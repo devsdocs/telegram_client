@@ -38,6 +38,10 @@ class TgUtils {
           .toList()
           .cast<int>();
     }
+
+    if (message_ids is num) {
+      return [message_ids.toInt()];
+    }
     return [];
   }
 
@@ -108,7 +112,7 @@ class TgUtils {
         return false;
       }
     } else if (data is Map) {
-      if (data.isEmpty) {
+      if (data.isNotEmpty) {
         return true;
       } else {
         return false;
@@ -127,9 +131,13 @@ class TgUtils {
       } else {
         return false;
       }
-    }
-    if (data is bool) {
+    } else if (data is bool) {
       return data;
+    } else if (data is num) {
+      if (data.toInt() < 0 || data.toInt() > 1) {
+        return true;
+      }
+      return false;
     } else {
       return false;
     }

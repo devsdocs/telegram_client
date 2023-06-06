@@ -14,7 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.5
-  galaxeus_lib: ^0.0.72
+  galaxeus_lib: ^0.0.73
   url_launcher: ^6.1.11
   universal_io: ^2.2.0
   galaxeus_lib_flutter: ^0.0.8
@@ -23,7 +23,7 @@ dependencies:
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   path_provider: ^2.0.15
-  telegram_client_flutter: any
+  telegram_client_flutter: ^0.0.9
   path: ^1.8.3
 
 dev_dependencies:
