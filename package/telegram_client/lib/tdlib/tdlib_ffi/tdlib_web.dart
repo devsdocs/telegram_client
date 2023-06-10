@@ -325,7 +325,7 @@ class LibTdJson {
   /// ```
   Future<Map> invoke(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     int? clientId,
     bool isVoid = false,
     Duration? delayDuration,
@@ -490,7 +490,7 @@ class LibTdJson {
   /// ```
   Map invokeSync(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     int? clientId,
     bool isThrowOnError = true,
   }) {

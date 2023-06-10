@@ -326,7 +326,7 @@ class Tdlib extends LibTdJson {
   /// invoke request all client
   Future<List<Map>> invokeAllClients(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     bool isVoid = false,
     Duration? delayDuration,
     Duration? invokeTimeOut,
@@ -365,7 +365,7 @@ class Tdlib extends LibTdJson {
   /// invokeSync  request all client
   List<Map> invokeSyncAllClients(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     bool isVoid = false,
     Duration? delayDuration,
     Duration? invokeTimeOut,
@@ -400,7 +400,7 @@ class Tdlib extends LibTdJson {
   /// invoke request all client
   Future<List<Map>> requestAllClients(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     bool isVoid = false,
     String? extra,
   }) async {
@@ -926,7 +926,7 @@ class Tdlib extends LibTdJson {
 
   Future<Map> requestInvoke(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     int? clientId,
     bool isVoid = false,
     Duration? delayDuration,
@@ -1202,7 +1202,7 @@ class Tdlib extends LibTdJson {
   @override
   Future<Map> request(
     String method, {
-    Map<String, dynamic>? parameters,
+    Map? parameters,
     int? clientId,
     bool isVoid = false,
     Duration? delayDuration,
