@@ -1,3 +1,11 @@
+## 0.4.24
+
+- send message as api
+
+## 0.4.23
+
+- update
+
 ## 0.4.21
 
 - fix parameters

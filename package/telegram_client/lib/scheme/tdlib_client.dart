@@ -9,6 +9,7 @@ class TdlibClient {
   int client_id;
   Isolate isolate;
   int client_user_id;
+
   DateTime join_date = DateTime.now();
 
   TdlibClient({

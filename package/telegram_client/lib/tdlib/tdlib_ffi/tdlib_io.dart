@@ -75,8 +75,10 @@ class LibTdJson {
   late String path_tdlib;
   bool is_cli;
   bool is_android = Platform.isAndroid;
-  List<TdlibClient> clients = [];
-  Map<int, TdlibClient> client = {};
+  // List<TdlibClient> clients = [];
+
+  Map<int, TdlibClient> clients = {};
+  // Map<int, TdlibClient> client = {};
   int client_id = 0;
   String event_invoke = "invoke";
   String event_update = "update";
@@ -110,6 +112,11 @@ class LibTdJson {
     this.on_get_invoke_data,
     this.on_receive_update,
   }) {
+    if (delayInvoke != null) {
+      delay_invoke = delayInvoke;
+    }
+    delay_update = delayUpdate;
+
     is_invoke_throw_on_error = isInvokeThrowOnError;
     pathTdl ??= "libtdjson.${getFormatLibrary}";
     path_tdlib = pathTdl;
@@ -145,7 +152,7 @@ class LibTdJson {
         TdlibIsolateReceiveDataError tdlibIsolateReceiveDataError = update;
         try {
           TdlibClient? tdlibClient =
-              clients.getClientById(tdlibIsolateReceiveDataError.clientId);
+              clients[tdlibIsolateReceiveDataError.clientId];
           if (tdlibClient != null) {
             tdlibClient.close();
           }
@@ -326,11 +333,16 @@ class LibTdJson {
       onExit: receivePort.sendPort,
       onError: receivePort.sendPort,
     );
-    clients.add(TdlibClient(
+    clients[clientId] = TdlibClient(
       client_id: clientId,
       isolate: isolate,
       client_user_id: clientUserId,
-    ));
+    );
+    // clients.add(TdlibClient(
+    //   client_id: clientId,
+    //   isolate: isolate,
+    //   client_user_id: clientUserId,
+    // ));
   }
 
   /// add this for multithread new client on flutter apps
@@ -351,34 +363,30 @@ class LibTdJson {
 
   // exit
   TdlibClient? getClientByUserId(int clientUserId) {
-    for (var i = 0; i < clients.length; i++) {
-      TdlibClient tdlibClient = clients[i];
-      if (tdlibClient.client_user_id == clientUserId) {
-        return tdlibClient;
+    List<MapEntry<int, TdlibClient>> entries = clients.entries.toList();
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].value.client_user_id == clientUserId) {
+        return entries[i].value;
       }
     }
+
     return null;
   }
 
   /// get all client id
   List<int> getAllClientIds() {
-    return clients
-        .map((e) {
-          return e.client_id;
-        })
-        .toList()
-        .cast<int>();
+    return clients.entries.map((e) => e.key).toList();
+    // return clients
+    //     .map((e) {
+    //       return e.client_id;
+    //     })
+    //     .toList()
+    //     .cast<int>();
   }
 
   // exit
   TdlibClient? getClientById(int clientId) {
-    for (var i = 0; i < clients.length; i++) {
-      TdlibClient tdlibClient = clients[i];
-      if (tdlibClient.client_id == clientId) {
-        return tdlibClient;
-      }
-    }
-    return null;
+    return clients[clientId];
   }
 
   Future<bool> exitClientById(
@@ -411,13 +419,7 @@ class LibTdJson {
   /// add this for handle update api
   ///
   bool existClientId(int clientId) {
-    for (var i = 0; i < clients.length; i++) {
-      TdlibClient tdlibClient = clients[i];
-      if (tdlibClient.client_id == clientId) {
-        return true;
-      }
-    }
-    return false;
+    return (clients[clientId] != null);
   }
 
   /// receive all update data

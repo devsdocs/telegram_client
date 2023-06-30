@@ -25,7 +25,6 @@ SOFTWARE.
 import 'dart:async';
 import 'dart:convert' as convert;
 import 'package:galaxeus_lib/galaxeus_lib.dart';
-import 'package:telegram_client/scheme/scheme.dart';
 import 'package:telegram_client/util/util.dart';
 import 'package:universal_io/io.dart';
 import 'tdlib_ffi/tdlib.dart';
@@ -280,23 +279,27 @@ class Tdlib extends LibTdJson {
       }
 
       if (authStateType == "authorizationStateReady") {
-        TdlibClient? tdlibClient = getClientById(update.client_id);
-        if (tdlibClient == null || tdlibClient.client_user_id != 0) {
-          if (tdlibClient == null) {
-            return null;
-          }
-        }
+        // TdlibClient? tdlibClient = getClientById(update.client_id);
+        // if (tdlibClient == null || tdlibClient.client_user_id != 0) {
+        //   if (tdlibClient == null) {
+        //     return null;
+        //   }
+        // }
         Map get_me = await getMe(
           clientId: update.client_id,
         );
-        for (var i = 0; i < clients.length; i++) {
-          TdlibClient tdlib_client = clients[i];
-          if (tdlib_client.client_id == update.client_id) {
-            tdlib_client.client_user_id = get_me["result"]["id"];
-            clients[i].client_user_id = get_me["result"]["id"];
-            return null;
-          }
+
+        if (clients[update.client_id] != null) {
+          clients[update.client_id]!.client_user_id = get_me["result"]["id"];
         }
+        // for (var i = 0; i < clients.length; i++) {
+        //   TdlibClient tdlib_client = clients[i];
+        //   if (tdlib_client.client_id == update.client_id) {
+        //     tdlib_client.client_user_id = get_me["result"]["id"];
+        //     clients[i].client_user_id = get_me["result"]["id"];
+        //     return null;
+        //   }
+        // }
       }
     }
     return null;
@@ -979,7 +982,9 @@ class Tdlib extends LibTdJson {
     String regexMethodSend =
         r"^(sendMessage|sendPhoto|sendVideo|sendAudio|sendVoice|sendDocument|sendSticker|sendAnimation)$";
     if (RegExp(regexMethodSend, caseSensitive: false).hashData(method)) {
-      Map result_request = {"ok": false};
+      Map result_request = {
+        "ok": false,
+      };
       result_request = await invoke(
         (RegExp("editMessageText", caseSensitive: false).hashData(method))
             ? method
@@ -1000,38 +1005,55 @@ class Tdlib extends LibTdJson {
           "@type": "ok",
         };
       }
-      result_request["ok"] ??= true;
-      if (!result_request["ok"]) {
+      if (result_request["ok"] == false) {
         throw result_request;
       }
       result_request.remove("ok");
       if (!parameters.containsKey("as_api")) {
         return result_request;
       }
-      var result = {};
 
-      var listen = on(event_invoke, (UpdateTd update) async {
-        try {
-          Map updateOrigin = update.raw;
-          if (updateOrigin["@type"] == "updateMessageSendSucceeded") {
-            if (updateOrigin["old_message_id"] == result_request["id"]) {
-              var json_message = await jsonMessage(
-                updateOrigin["message"],
-                clientId: clientId,
-              );
-              if (json_message["ok"]) {
-                json_message["result"]["@type"] = "updateNewMessage";
-                result = json_message["result"];
-              } else {
-                json_message["result"]["@type"] = "error";
-                result = json_message["result"];
-              }
-            }
-          }
-        } catch (e) {
-          rethrow;
+      Map result = {};
+
+      var listen = on(event_update, (UpdateTd update) async {
+        if (update.client_id != clientId) {
+          return;
         }
+        Map updateOrigin = update.raw;
+        if (!["updateMessageSendSucceeded", "updateMessageSendFailed"]
+            .contains(updateOrigin["@type"])) {
+          return;
+        }
+
+        if (updateOrigin["message"] is Map &&
+            updateOrigin["message"]["chat_id"] == result_request["chat_id"] &&
+            updateOrigin["old_message_id"] == result_request["id"]) {
+          // updateOrigin.printPretty(2);
+          //
+
+          result = updateOrigin;
+        }
+
+        // if (updateOrigin["old_message_id"] == result_request["id"]) {
+        //   updateOrigin.printPretty(2);
+        //   Map json_message = await jsonMessage(
+        //     updateOrigin["message"],
+        //     clientId: clientId,
+        //     is_detail: true,
+        //     is_skip_reply_message: true,
+        //   );
+        //   if (json_message["ok"] == true) {
+        //     json_message["result"]["@type"] = "updateNewMessage";
+        //     result = json_message["result"];
+        //   } else {
+        //     json_message["result"]["@type"] = "error";
+        //     result = json_message["result"];
+        //   }
+        // } else if (updateOrigin["message_ids"] is List && (updateOrigin["message_ids"] as List).contains(result_request["id"])) {
+        //   result["@type"] = "error";
+        // }
       });
+
       while (true) {
         await Future.delayed(Duration(milliseconds: 1));
         if (result["@type"] is String) {
@@ -1040,7 +1062,32 @@ class Tdlib extends LibTdJson {
             throw result;
           }
           result.remove("@type");
-          return {"ok": true, "result": result};
+          if (result["message"] is Map) {
+            Map json_message = await jsonMessage(
+              result["message"],
+              clientId: clientId,
+              is_detail: false,
+              is_skip_reply_message: true,
+              is_from_send_message: true,
+              is_super_detail: true,
+            );
+            if (json_message["result"] is Map) {
+              if (json_message["ok"] == true) {
+                json_message["result"]["@type"] = "message";
+                result = json_message["result"];
+              } else {
+                json_message["result"]["@type"] = "error";
+                result = json_message["result"];
+              }
+            }
+          }
+
+          //
+          //
+          return {
+            "ok": true,
+            "result": result,
+          };
         }
       }
     }
@@ -1323,7 +1370,7 @@ class Tdlib extends LibTdJson {
   }) async {
     clientId ??= client_id;
     var get_message = await invoke(
-      "getMessage",
+      methodName,
       parameters: {
         "chat_id": chat_id,
         "message_id": message_id,
@@ -1504,7 +1551,8 @@ class Tdlib extends LibTdJson {
     clientId ??= client_id;
     try {
       if (chat_id is String &&
-          RegExp(r"^([a-z0-9_]+)$", caseSensitive: false).hashData(chat_id)) {
+          RegExp(r"^((@)?[a-z0-9_]+)$", caseSensitive: false)
+              .hashData(chat_id)) {
         var search_public_chat = await invoke(
           "searchPublicChat",
           parameters: {
@@ -1974,18 +2022,23 @@ class Tdlib extends LibTdJson {
   }
 
   /// convert tdlib update to bot api for more humanize
-  Future<Map> jsonMessage(Map update,
-      {Map? from_data,
-      Map? chat_data,
-      bool is_detail = false,
-      bool is_skip_reply_message = false,
-      bool is_super_detail = false,
-      bool is_more_detail = false,
-      required int? clientId}) async {
+  Future<Map> jsonMessage(
+    Map update, {
+    Map? from_data,
+    Map? chat_data,
+    bool is_detail = false,
+    bool is_skip_reply_message = false,
+    bool is_super_detail = false,
+    bool is_more_detail = false,
+    bool is_from_send_message = false,
+    required int? clientId,
+  }) async {
     clientId ??= client_id;
     try {
       if (update["@type"] == "message") {
-        Map json = {};
+        Map json = {
+          "id": update["id"],
+        };
         Map chat_json = {
           "id": update["chat_id"],
           "first_name": "",
@@ -2739,7 +2792,9 @@ class Tdlib extends LibTdJson {
             }
           } catch (e, stack) {}
         }
-
+        if (is_detail && is_from_send_message) {
+          return {"ok": true, "result": json};
+        }
         if (is_detail) {
           if (is_super_detail) {
             if (json["chat"]["type"] != null) {
