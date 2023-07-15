@@ -46,10 +46,12 @@ Library hanya update jika ada feature yang saya ingin update jika kamu butuh lib
 <img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/home.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/205481759-b6815e2f-bd5d-4d72-9570-becd3829dd36.png" width="250px"><img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/me.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319331-9e96fbe7-3e66-44b2-8577-f6685d86a368.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319541-19a60407-f410-4e95-8ac0-d0da2eaf2457.png" width="250px">
 
 
-2. GLX Socmed<br>
-  <!-- Application Social Media dengan fitur menjalankan berbagai bot dari social media popular seperti Telegram, Twitter, Whatsapp, Instagram, Github, Youtube, App Project Ini Berbayar Perbulan cukup 10k. -->
+2. GLX Socmed
 
-  
+<img src="https://github.com/azkadev/telegram_client/assets/82513502/73019b47-bcf8-4f2e-8619-0a5652fcfc50" width="250px"><img src="https://github.com/azkadev/telegram_client/assets/82513502/0fb9be47-22f3-4780-bbf6-4beb9a9dc7b3" width="250px">
+<!-- ![2023-07-16 01:31:43 987394]() -->
+ 
+
 
 ## Examples Bot use Telegram Client
 
