@@ -43,8 +43,8 @@ Library hanya update jika ada feature yang saya ingin update jika kamu butuh lib
     
  Telegram Application dengan menambahkan design baru serta fitur userbot dan fitur lain yang tidak di sediakan secara resmi oleh telegram project ini sudah di close source code karena banyak yang berusaha membuat app ini untuk melakukan tindakan kriminal (spam, scam), Jika anda ingin membuat silahkan pelajari library ini.
 
-<img src="https://raw.githubusercontent.com/azkadev/azkagram/main/screenshot/home.png" width="250px"><img src="https://user-images.githubusercontent.com/82513502/205481759-b6815e2f-bd5d-4d72-9570-becd3829dd36.png" width="250px"><img src="https://github.com/azkadev/telegram_client/assets/82513502/726eef50-d477-4686-9f63-0a60526850da" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319331-9e96fbe7-3e66-44b2-8577-f6685d86a368.png" width="250px"><img src="[https://user-images.githubusercontent.com/82513502/173319541-19a60407-f410-4e95-8ac0-d0da2eaf2457.png](https://github.com/azkadev/telegram_client/assets/82513502/cedf8d8b-00b2-4a5e-bb81-bd01a46a6293)" width="250px">
-
+<img src="https://github.com/azkadev/telegram_client/assets/82513502/6cd07922-ba32-4b4e-b89f-c50a35827921" width="250px"><img src="https://user-images.githubusercontent.com/82513502/205481759-b6815e2f-bd5d-4d72-9570-becd3829dd36.png" width="250px"><img src="https://github.com/azkadev/telegram_client/assets/82513502/726eef50-d477-4686-9f63-0a60526850da" width="250px"><img src="https://user-images.githubusercontent.com/82513502/173319331-9e96fbe7-3e66-44b2-8577-f6685d86a368.png" width="250px"><img src="https://github.com/azkadev/telegram_client/assets/82513502/cedf8d8b-00b2-4a5e-bb81-bd01a46a6293" width="250px">
+ 
 
 2. GLX BOT 
 
