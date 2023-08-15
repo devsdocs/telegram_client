@@ -530,6 +530,10 @@ class TelegramUserbotTdlibTemplate {
         clientId: updateTd.client_id,
       );
     }
+
+    if (isOutgoing == false) {
+      // outgoing pesan
+    }
     return null;
   }
 }

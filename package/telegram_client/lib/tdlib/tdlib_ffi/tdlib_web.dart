@@ -67,6 +67,10 @@ class LibTdJson {
     "database_key": "",
     "start": true,
   };
+  late SendPort sendPort;
+  late Isolate isolate;
+  bool is_init_isolate = false;
+  bool is_init_send_port = false;
   late String path_tdlib;
   bool is_cli;
   bool is_android = Platform.isAndroid;
@@ -133,13 +137,12 @@ class LibTdJson {
           event_emitter.emit(event_update, null, tdlibIsolateReceiveData);
         }
       } else if (update is TdlibIsolateReceiveDataError) {
-        TdlibIsolateReceiveDataError tdlibIsolateReceiveDataError = update;
+        // TdlibIsolateReceiveDataError tdlibIsolateReceiveDataError = update;
         try {
-          TdlibClient? tdlibClient =
-              clients.getClientById(tdlibIsolateReceiveDataError.clientId);
-          if (tdlibClient != null) {
-            tdlibClient.close();
-          }
+          // TdlibClient? tdlibClient = clients.getClientById(tdlibIsolateReceiveDataError.clientId);
+          // if (tdlibClient != null) {
+          //   tdlibClient.close();
+          // }
         } catch (e) {}
       }
     });
@@ -268,7 +271,7 @@ class LibTdJson {
           );
         } catch (e) {}
       }
-      tdlibClient.close();
+      // tdlibClient.close();
       clients.remove(tdlibClient);
       return true;
     }

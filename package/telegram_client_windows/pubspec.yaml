@@ -9,10 +9,10 @@ funding:
   - https://github.com/sponsors/azkadev
 
 false_secrets:
- - windows/tdlib/
+ - android/src/main/jniLibs/
 
 platforms:
- windows:
+ android:
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

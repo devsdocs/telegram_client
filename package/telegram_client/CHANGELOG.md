@@ -1,3 +1,38 @@
+## 0.4.36
+
+- Mempekecil ram usage dan sekarang support unlimited clients dahulu max tegantung core cpu
+
+
+## 0.4.34
+
+- update
+
+## 0.4.33
+
+- update
+
+
+## 0.4.32
+
+- update
+
+## 0.4.31
+
+- update
+  
+## 0.4.30
+
+- fix exit client
+
+## 0.4.29
+
+- fix score
+
+## 0.4.28
+
+- update template
+
+
 ## 0.4.24
 
 - send message as api

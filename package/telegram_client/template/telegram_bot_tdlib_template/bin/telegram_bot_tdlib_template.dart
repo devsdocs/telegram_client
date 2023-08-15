@@ -29,10 +29,6 @@ void main(List<String> arguments) async {
 
   Tdlib tg = Tdlib(
     pathTdl: "libtdjson.${getFormatLibrary}",
-    clientOption: {
-      'api_id': api_id,
-      'api_hash': api_hash,
-    },
     invokeTimeOut: Duration(minutes: 10),
     delayInvoke: Duration(milliseconds: 10),
   );

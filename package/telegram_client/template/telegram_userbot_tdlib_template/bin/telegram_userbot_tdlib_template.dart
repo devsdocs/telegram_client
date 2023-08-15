@@ -34,7 +34,9 @@ void main(List<String> arguments) async {
   Directory telegram_directory =
       Directory(path.join(directory_current.path, "tg_database"));
 
-  List<String> name_clients = ["azka"];
+  List<String> name_clients = [
+    "azka",
+  ];
 
   /// telegram database
   int api_id = int.tryParse(Platform.environment["api_id"] ?? "0") ??

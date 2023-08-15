@@ -41,15 +41,14 @@ Future<Map?> apiUpdateMsg(Map message,
   try {
     if (update.client_option["is_login_bot"] != true &&
         chatJson["type"] != "private") {
-      DateTime dateTime = DateTime.now();
-      DateTime dateTimeMessage =
-          DateTime.fromMillisecondsSinceEpoch((message["date"] * 1000));
-      Duration duration = dateTime.difference(dateTimeMessage);
+      // DateTime dateTime = DateTime.now();
+      // DateTime dateTimeMessage = DateTime.fromMillisecondsSinceEpoch((message["date"] * 1000));
+      // Duration duration = dateTime.difference(dateTimeMessage);
 
-      if (duration > Duration(minutes: 2)) {
-        print("skip date");
-        return null;
-      }
+      // if (duration > Duration(minutes: 2)) {
+      //   print("skip date");
+      //   return null;
+      // }
     }
   } catch (e) {
     print("Errir_skip: ${update.client_id}");
@@ -164,8 +163,9 @@ Future<Map?> apiUpdateMsg(Map message,
       try {
         var getMessage = await tg.getMessage(
           message["reply_in_chat_id"],
-          message["reply_to_message_id"],
+          message["id"],
           is_detail: false,
+          methodName: "getRepliedMessage",
           is_super_detail: true,
           is_skip_reply_message: true,
           clientId: update.client_id,
