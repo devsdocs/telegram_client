@@ -168,31 +168,32 @@ class TelegramBotTdlibTemplate {
 
             if (authStateType == "authorizationStateReady") {
               var getMe = await tg.getMe(clientId: update.client_id);
+              print(getMe);
 
               if (tg.client_id == update.client_id) {
                 print("succes login main bot");
-                try {
-                  await tg.request(
-                    "createPrivateChat",
-                    parameters: {
-                      "user_id": owner_chat_id,
-                      "force": true,
-                    },
-                    clientId: update.client_id,
-                    isAutoGetChat: false,
-                  );
-                  await tg.request(
-                    "sendMessage",
-                    parameters: {
-                      "chat_id": owner_chat_id,
-                      "text": "Bot Telah Di Restart",
-                    },
-                    clientId: update.client_id,
-                    isAutoGetChat: false,
-                  );
-                } catch (e, stack) {
-                  print("${e.toString()}, ${stack.toString()}");
-                }
+                // try {
+                //   await tg.request(
+                //     "createPrivateChat",
+                //     parameters: {
+                //       "user_id": owner_chat_id,
+                //       "force": true,
+                //     },
+                //     clientId: update.client_id,
+                //     isAutoGetChat: false,
+                //   );
+                //   await tg.request(
+                //     "sendMessage",
+                //     parameters: {
+                //       "chat_id": owner_chat_id,
+                //       "text": "Bot Telah Di Restart",
+                //     },
+                //     clientId: update.client_id,
+                //     isAutoGetChat: false,
+                //   );
+                // } catch (e, stack) {
+                //   print("${e.toString()}, ${stack.toString()}");
+                // }
               } else {
                 print("succes: ${update.client_id}");
               }

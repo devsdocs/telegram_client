@@ -1,5 +1,8 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, empty_catches
 
+import 'dart:async';
+
+import 'package:http/http.dart';
 import 'package:universal_io/io.dart';
 
 /// telegram bot api server
@@ -70,13 +73,16 @@ class TelegramBotApiServer {
   Future<Process> run({
     required String executable,
     required List<String> arguments,
+    required String host,
+    required int tg_bot_api_port,
     String? workingDirectory,
     Map<String, String>? environment,
     bool includeParentEnvironment = true,
     bool runInShell = true,
     ProcessStartMode mode = ProcessStartMode.normal,
+    bool is_print = false,
   }) async {
-    return await Process.start(
+    Process shell_tg_bot = await Process.start(
       executable,
       arguments,
       environment: environment,
@@ -85,5 +91,74 @@ class TelegramBotApiServer {
       workingDirectory: workingDirectory,
       mode: mode,
     );
+
+    if (is_print) {
+      var stderr_wa = shell_tg_bot.stderr.listen((event) {
+        try {
+          stderr.add(event);
+        } catch (e) {}
+      });
+      // shell_tg_bot
+      var stdout_wa = shell_tg_bot.stdout.listen((event) {
+        try {
+          stdout.add(event);
+        } catch (e) {}
+      });
+      Timer.periodic(Duration(seconds: 2), (timer) async {
+        try {
+          await get(Uri.parse("http://${host}:${tg_bot_api_port}"));
+        } catch (e) {
+          if (e is ClientException) {
+            if (e.message == "Connection refused") {
+              timer.cancel();
+              await stderr_wa.cancel();
+              await stdout_wa.cancel();
+              shell_tg_bot.kill(ProcessSignal.sigkill);
+              await run(
+                executable: executable,
+                arguments: arguments,
+                host: host,
+                tg_bot_api_port: tg_bot_api_port,
+                workingDirectory: workingDirectory,
+                environment: environment,
+                includeParentEnvironment: includeParentEnvironment,
+                runInShell: runInShell,
+                mode: mode,
+                is_print: is_print,
+              );
+            }
+          }
+        }
+      });
+    } else {
+      Timer.periodic(Duration(seconds: 2), (timer) async {
+        try {
+          await get(Uri.parse("http://${host}:${tg_bot_api_port}"));
+        } catch (e) {
+          if (e is ClientException) {
+            if (e.message == "Connection refused") {
+              timer.cancel();
+              // await stderr_wa.cancel();
+              // await stdout_wa.cancel();
+              shell_tg_bot.kill(ProcessSignal.sigkill);
+              await run(
+                executable: executable,
+                arguments: arguments,
+                host: host,
+                tg_bot_api_port: tg_bot_api_port,
+                workingDirectory: workingDirectory,
+                environment: environment,
+                includeParentEnvironment: includeParentEnvironment,
+                runInShell: runInShell,
+                mode: mode,
+                is_print: is_print,
+              );
+            }
+          }
+        }
+      });
+    }
+
+    return shell_tg_bot;
   }
 }

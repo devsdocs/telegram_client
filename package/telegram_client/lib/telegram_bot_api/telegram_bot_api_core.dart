@@ -232,133 +232,158 @@ class TelegramBotApi {
         });
       }
     }
-    if (is_form) {
-      // Map params = parameters;
-      final httpClient = HttpClient();
-      final request = await httpClient.postUrl(Uri.parse(url));
-      var form = MultipartRequest("post", Uri.parse(url));
+    try {
+      if (is_form) {
+        // Map params = parameters;
+        final httpClient = HttpClient();
+        final request = await httpClient.postUrl(Uri.parse(url));
+        var form = MultipartRequest("post", Uri.parse(url));
 
-      parameters.forEach((key, value) async {
-        if (value is File) {
-          form.fields[key] = value.uri.toString();
-        } else if (value is Map) {
-          if (value["is_post_file"] == true) {
-            var files = await MultipartFile.fromPath(key, value["file_path"]);
-            form.files.add(files);
-          } else if (value["is_post_buffer"] == true) {
-            var files = MultipartFile.fromBytes(key, value["buffer"],
-                filename: value["name"], contentType: value["content_type"]);
-            form.files.add(files);
-          } else {
-            form.fields[key] = convert.json.encode(value);
-          }
-        } else if (value is String) {
-          form.fields[key] = value;
-        } else if (key == "media" && value is List<Map>) {
-          List<Map> values = [];
-          for (var i = 0; i < value.length; i++) {
-            Map value_data = value[i];
-            Map jsonData = {};
-            value_data.forEach((key_loop, value_loop) {
-              if (key_loop == "media" && value_loop is Map) {
-                if (value_loop["is_post_buffer"] == true) {
-                  String name_file = "file_${i}_${value_loop["name"]}";
-                  var files = MultipartFile.fromBytes(
-                    name_file,
-                    value_loop["buffer"],
-                    filename: value_loop["name"],
-                    contentType: value_loop["content_type"],
-                  );
-                  form.files.add(files);
-                  jsonData[key_loop] = "attach://${name_file}";
+        parameters.forEach((key, value) async {
+          if (value is File) {
+            form.fields[key] = value.uri.toString();
+          } else if (value is Map) {
+            if (value["is_post_file"] == true) {
+              var files = await MultipartFile.fromPath(key, value["file_path"]);
+              form.files.add(files);
+            } else if (value["is_post_buffer"] == true) {
+              var files = MultipartFile.fromBytes(key, value["buffer"],
+                  filename: value["name"], contentType: value["content_type"]);
+              form.files.add(files);
+            } else {
+              form.fields[key] = convert.json.encode(value);
+            }
+          } else if (value is String) {
+            form.fields[key] = value;
+          } else if (key == "media" && value is List<Map>) {
+            List<Map> values = [];
+            for (var i = 0; i < value.length; i++) {
+              Map value_data = value[i];
+              Map jsonData = {};
+              value_data.forEach((key_loop, value_loop) {
+                if (key_loop == "media" && value_loop is Map) {
+                  if (value_loop["is_post_buffer"] == true) {
+                    String name_file = "file_${i}_${value_loop["name"]}";
+                    var files = MultipartFile.fromBytes(
+                      name_file,
+                      value_loop["buffer"],
+                      filename: value_loop["name"],
+                      contentType: value_loop["content_type"],
+                    );
+                    form.files.add(files);
+                    jsonData[key_loop] = "attach://${name_file}";
+                  } else {
+                    jsonData[key_loop] = value_loop.toString();
+                  }
+                } else if (value_loop is File) {
+                  jsonData[key_loop] = value_loop.uri.toString();
                 } else {
                   jsonData[key_loop] = value_loop.toString();
                 }
-              } else if (value_loop is File) {
-                jsonData[key_loop] = value_loop.uri.toString();
-              } else {
-                jsonData[key_loop] = value_loop.toString();
-              }
-            });
-            values.add(jsonData);
-          }
-          form.fields[key] = convert.json.encode(values);
-        } else {
-          form.fields[key] = value.toString();
-        }
-      });
-
-      var msStream = form.finalize();
-      var totalByteLength = form.contentLength;
-      request.contentLength = totalByteLength;
-      request.headers.set(
-        HttpHeaders.contentTypeHeader,
-        form.headers[HttpHeaders.contentTypeHeader]!,
-      );
-      int byteCount = 0;
-      Stream<List<int>> streamUpload = msStream.transform(
-        StreamTransformer.fromHandlers(
-          handleData: (data, sink) {
-            sink.add(data);
-            byteCount += data.length;
-            if (onUploadProgress != null) {
-              onUploadProgress(byteCount, totalByteLength);
+              });
+              values.add(jsonData);
             }
-          },
-          handleError: (error, stack, sink) {
-            throw error;
-          },
-          handleDone: (sink) {
-            sink.close();
-          },
-        ),
-      );
-      await request.addStream(streamUpload);
-      final httpResponse = await request.close();
-      var statusCode = httpResponse.statusCode;
-      var completer = Completer<String>();
-      var contents = StringBuffer();
-      httpResponse.transform(convert.utf8.decoder).listen((String data) {
-        contents.write(data);
-      }, onDone: () => completer.complete(contents.toString()));
-      var body = convert.json.decode(await completer.future);
-      if (statusCode == 200) {
-        return body;
-      } else {
-        if (isThrowOnError) {
-          throw body;
-        } else {
+            form.fields[key] = convert.json.encode(values);
+          } else {
+            form.fields[key] = value.toString();
+          }
+        });
+
+        var msStream = form.finalize();
+        var totalByteLength = form.contentLength;
+        request.contentLength = totalByteLength;
+        request.headers.set(
+          HttpHeaders.contentTypeHeader,
+          form.headers[HttpHeaders.contentTypeHeader]!,
+        );
+        int byteCount = 0;
+        Stream<List<int>> streamUpload = msStream.transform(
+          StreamTransformer.fromHandlers(
+            handleData: (data, sink) {
+              sink.add(data);
+              byteCount += data.length;
+              if (onUploadProgress != null) {
+                onUploadProgress(byteCount, totalByteLength);
+              }
+            },
+            handleError: (error, stack, sink) {
+              throw error;
+            },
+            handleDone: (sink) {
+              sink.close();
+            },
+          ),
+        );
+        await request.addStream(streamUpload);
+        final httpResponse = await request.close();
+        var statusCode = httpResponse.statusCode;
+        var completer = Completer<String>();
+        var contents = StringBuffer();
+        httpResponse.transform(convert.utf8.decoder).listen((String data) {
+          contents.write(data);
+        }, onDone: () => completer.complete(contents.toString()));
+        var body = convert.json.decode(await completer.future);
+        if (statusCode == 200) {
           return body;
+        } else {
+          if (isThrowOnError) {
+            throw body;
+          } else {
+            return body;
+          }
+        }
+      } else {
+        option["body"] = convert.json.encode(parameters);
+        var response = await post(
+          Uri.parse(url),
+          headers: {
+            'Accept': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+          body: option["body"],
+        );
+        if (response.statusCode == 200) {
+          if (method.toString().toLowerCase() == "getfile") {
+            var getFile = convert.json.decode(response.body);
+            var url = "${urlApi}file/$clientType${tokenBot.toString()}";
+            getFile["result"]["file_url"] =
+                "$url/${getFile["result"]["file_path"]}";
+            return getFile;
+          } else {
+            return convert.json.decode(response.body);
+          }
+        } else {
+          var json = convert.json.decode(response.body);
+          if (isThrowOnError) {
+            throw json;
+          } else {
+            return json;
+          }
         }
       }
-    } else {
-      option["body"] = convert.json.encode(parameters);
-      var response = await post(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: option["body"],
-      );
-      if (response.statusCode == 200) {
-        if (method.toString().toLowerCase() == "getfile") {
-          var getFile = convert.json.decode(response.body);
-          var url = "${urlApi}file/$clientType${tokenBot.toString()}";
-          getFile["result"]["file_url"] =
-              "$url/${getFile["result"]["file_path"]}";
-          return getFile;
-        } else {
-          return convert.json.decode(response.body);
+    } catch (e) {
+      if (RegExp(r"^(send)", caseSensitive: false).hasMatch(method)) {
+        if (e is Map) {
+          if (RegExp("Unsupported start tag", caseSensitive: false)
+              .hasMatch(e["description"])) {
+            parameters.remove("parse_mode");
+            return await invoke(
+              method,
+              parameters: parameters,
+              is_form: is_form,
+              isThrowOnError: isThrowOnError,
+              tokenBot: tokenBot,
+              urlApi: urlApi,
+              clientType: clientType,
+              onUploadProgress: onUploadProgress,
+            );
+            // Bad Request: can't parse entities: Unsupported start tag "spoir" at byte offset 79
+          }
         }
+        rethrow;
       } else {
-        var json = convert.json.decode(response.body);
-        if (isThrowOnError) {
-          throw json;
-        } else {
-          return json;
-        }
+        rethrow;
       }
     }
   }

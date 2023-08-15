@@ -30,6 +30,7 @@ import 'dart:convert' as convert;
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:telegram_client/isolate/isolate.dart';
 import 'package:telegram_client/scheme/scheme.dart';
+import 'package:telegram_client/tdlib/tdlib_ffi/tdlib_isolate.dart';
 import 'package:telegram_client/tdlib/tdlib_isolate_data.dart';
 import 'package:telegram_client/tdlib/tdlib_isolate_receive_data.dart';
 import 'package:telegram_client/tdlib/update_td.dart';
@@ -72,6 +73,10 @@ class LibTdJson {
     "database_key": "",
     "start": true,
   };
+  late SendPort sendPort;
+  late Isolate isolate;
+  bool is_init_isolate = false;
+  bool is_init_send_port = false;
   late String path_tdlib;
   bool is_cli;
   bool is_android = Platform.isAndroid;
@@ -135,6 +140,11 @@ class LibTdJson {
     }
 
     receivePort.listen((update) async {
+      if (update is SendPort) {
+        sendPort = update;
+        is_init_send_port = true;
+        return;
+      }
       if (on_receive_update != null) {
         await on_receive_update!(update, this);
       } else if (update is TdlibIsolateReceiveData) {
@@ -154,7 +164,7 @@ class LibTdJson {
           TdlibClient? tdlibClient =
               clients[tdlibIsolateReceiveDataError.clientId];
           if (tdlibClient != null) {
-            tdlibClient.close();
+            // tdlibClient.close();
           }
         } catch (e) {}
       }
@@ -252,7 +262,7 @@ class LibTdJson {
   }
 
   /// fetch update
-  Map<String, dynamic>? client_receive(int clientId, [double timeout = 1.0]) {
+  Map<String, dynamic>? client_receive(int clientId, [double timeout = 0.0]) {
     try {
       ffi.Pointer client_id_addres_data = client_id_addres(clientId);
       ffi.Pointer<pkgffi.Utf8> update = tdLib
@@ -287,62 +297,33 @@ class LibTdJson {
     if (clientOption != null) {
       client_new_option.addAll(clientOption);
     }
-    TdlibIsolateData tdlibIsolateData = TdlibIsolateData(
-      sendPort: receivePort.sendPort,
-      clientOption: client_new_option,
-      clientId: clientId,
-      pathTdlib: path_tdlib,
-      isAndroid: is_android,
-      delayUpdate: delay_update,
-      timeOutUpdate: timeOutUpdate,
-    );
-    Isolate isolate = await Isolate.spawn<TdlibIsolateData>(
-      (TdlibIsolateData tdlibIsolateData) async {
-        try {
-          LibTdJson tg = LibTdJson(
-            pathTdl: tdlibIsolateData.pathTdlib,
-            clientOption: tdlibIsolateData.clientOption,
-          );
-          while (true) {
-            if (tdlibIsolateData.delayUpdate != null) {
-              await Future.delayed(
-                  tdlibIsolateData.delayUpdate ?? Duration.zero);
-            }
-            Map? new_update = tg.client_receive(
-                tdlibIsolateData.clientId, tdlibIsolateData.timeOutUpdate);
-            if (new_update != null) {
-              tdlibIsolateData.sendPort.send(
-                TdlibIsolateReceiveData(
-                  updateData: new_update,
-                  clientId: tdlibIsolateData.clientId,
-                  clientOption: tdlibIsolateData.clientOption,
-                ),
-              );
-            }
-          }
-        } catch (e) {
-          tdlibIsolateData.sendPort.send(
-            TdlibIsolateReceiveDataError(
-              clientId: tdlibIsolateData.clientId,
-              clientOption: tdlibIsolateData.clientOption,
-            ),
-          );
-        }
-      },
-      tdlibIsolateData,
-      onExit: receivePort.sendPort,
-      onError: receivePort.sendPort,
-    );
-    clients[clientId] = TdlibClient(
-      client_id: clientId,
-      isolate: isolate,
-      client_user_id: clientUserId,
-    );
-    // clients.add(TdlibClient(
-    //   client_id: clientId,
-    //   isolate: isolate,
-    //   client_user_id: clientUserId,
-    // ));
+    TdlibClient tdlibClient = TdlibClient(
+        client_id: clientId,
+        client_user_id: clientUserId,
+        client_option: client_new_option);
+    if ((is_init_isolate == false)) {
+      TdlibIsolateData tdlibIsolateData = TdlibIsolateData(
+        sendPort: receivePort.sendPort,
+        tdlibClient: tdlibClient,
+        // clientOption: client_new_option,
+        // clientId: clientId,
+        pathTdlib: path_tdlib,
+        isAndroid: is_android,
+        delayUpdate: delay_update,
+        timeOutUpdate: timeOutUpdate,
+      );
+      isolate = await Isolate.spawn<TdlibIsolateData>(
+        tdlibIsolate,
+        tdlibIsolateData,
+        onExit: receivePort.sendPort,
+        onError: receivePort.sendPort,
+      );
+      clients[clientId] = tdlibClient;
+      is_init_isolate = true;
+    } else {
+      sendPort.send(tdlibClient);
+      clients[clientId] = tdlibClient;
+    }
   }
 
   /// add this for multithread new client on flutter apps
@@ -389,6 +370,22 @@ class LibTdJson {
     return clients[clientId];
   }
 
+  Future<bool> updateClientById(
+    int clientId, {
+    required TdlibClient newTdlibClient,
+    String? extra,
+    bool isInvokeThrowOnError = true,
+  }) async {
+    TdlibClient? tdlibClient = clients[clientId];
+    if (tdlibClient != null) {
+      sendPort.send(newTdlibClient);
+
+      clients[clientId] = newTdlibClient;
+      return true;
+    }
+    return false;
+  }
+
   Future<bool> exitClientById(
     int clientId, {
     bool isClose = false,
@@ -408,9 +405,9 @@ class LibTdJson {
           );
         } catch (e) {}
       }
-      tdlibClient.close();
-      clients.remove(tdlibClient);
-      return true;
+
+      sendPort.send(TdlibClientExit(client_id: clientId));
+      return (clients.remove(clientId) != null);
     }
     return false;
   }

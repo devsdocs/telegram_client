@@ -1,6 +1,6 @@
 name: telegram_client_flutter
 description: A new Flutter telegram.
-version: 0.0.5
+version: 0.0.10
 homepage: https://youtube.com/@azkadev
 repository: https://github.com/azkadev/telegram_client
 issue_tracker: https://github.com/azkadev/telegram_client/issues 
@@ -15,7 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  telegram_client_android: ^0.0.0
+  telegram_client_android: ^0.0.5
   telegram_client_linux: ^0.0.0
   telegram_client_windows: ^0.0.0
     

@@ -13,7 +13,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  telegram_client: any
+  telegram_client: ^0.4.27
   path: ^1.8.3
   galaxeus_lib: ^0.0.73
   alfred: ^1.0.1+2
